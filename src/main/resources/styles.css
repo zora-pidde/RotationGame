@@ -1,0 +1,8 @@
+.header_text{
+    -fx-alignment: top-center;
+    -fx-font-size: 25pt;
+    -fx-text-fill: white;
+    -fx-font-family: "verdana";
+    -fx-font-weight: bold;
+    -fx-color: white;
+}
