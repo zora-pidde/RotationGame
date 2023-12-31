@@ -5,3 +5,10 @@
     -fx-font-weight: bold;
     -fx-color: white;
 }
+
+.framed{
+    -fx-padding:10;
+    -fx-background-color: black;
+    -fx-border-color: white;
+    -fx-border-radius: 5;
+}

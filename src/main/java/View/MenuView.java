@@ -9,13 +9,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
@@ -63,25 +61,57 @@ public class MenuView extends Application {
         return imgV;
     }
 
-    public void addLevels(){
+//    public void addLevels(){
+//        int size = 200;
+//        int distance = 10;
+//        int posX = distance;
+//        ImageView imgV1 = applyLevel("level2.png");
+//        ImageView imgV2 = applyLevel("level1.png");
+//        ImageView imgV3 = applyLevel("level3.png");
+//        ImageView[] imgVs = {imgV1, imgV2, imgV3};
+//        for(int i = 0; i < imgVs.length; i++){
+//            imgVs[i].setFitWidth(size);
+//            imgVs[i].setFitHeight(size);
+//            imgVs[i].setY(50);
+//            imgVs[i].setX(posX);
+//            posX += size + distance;
+//        }
+//        this.root.getChildren().addAll(imgVs);
+//    }
+
+    public void addLevels(VBox heightRegion){
+        int spacing = 15;
+        int borderDist = 10;
         int size = 200;
-        int distance = 10;
-        int posX = distance;
-        ImageView imgV1 = applyLevel("happy.png");
-        ImageView imgV2 = applyLevel("sleep.png");
-        ImageView imgV3 = applyLevel("flower.png");
-        ImageView[] imgVs = {imgV1, imgV2, imgV3};
-        for(int i = 0; i < imgVs.length; i++){
-            imgVs[i].setFitWidth(size);
-            imgVs[i].setFitHeight(size);
-            imgVs[i].setY(50);
-            imgVs[i].setX(posX);
-            posX += size + distance;
+        // CAREFUL: if adding new pictures need to reset this number
+        int nPics = 4;
+        int nPicsPerRow = (this.screenWidth - 2* borderDist + spacing)/(size + spacing);
+        int nRows = Math.ceilDiv(nPics, nPicsPerRow);
+        System.out.println("number of Pics per Row: "+nPicsPerRow);
+        System.out.println("number of Rows: "+nRows);
+        for(int i = 0; i < nRows; i++) {
+            System.out.println();
+            HBox levels = new HBox(spacing);
+//            levels.setPadding(new Insets(this.screenHeight / 10 + i*(size+spacing), borderDist, borderDist, borderDist));
+            levels.setPadding(new Insets(borderDist, borderDist, borderDist, borderDist));
+            levels.setMaxWidth(screenWidth);
+            levels.setMinWidth(screenWidth);
+            levels.setPrefHeight(size + spacing);
+            levels.setAlignment(Pos.CENTER);
+            for (int j = 0; j < nPicsPerRow; j++) {
+                if (i * nPicsPerRow + (j + 1) > nPics) {
+                    break;
+                }
+                ImageView imgV = applyLevel("level" + (i * nPicsPerRow + (j + 1)) + ".png");
+                imgV.setFitWidth(size);
+                imgV.setFitHeight(size);
+                levels.getChildren().add(imgV);
+            }
+            heightRegion.getChildren().add(levels);
         }
-        this.root.getChildren().addAll(imgVs);
     }
 
-    public void addHeader(){
+    public void addHeader(VBox heightRegion){
         HBox headerBox = new HBox();
         headerBox.setPrefWidth(this.screenWidth);
         headerBox.setPadding(new Insets(10, 10, 10, 10));
@@ -89,7 +119,8 @@ public class MenuView extends Application {
         header.getStyleClass().add("header_text");
         headerBox.setAlignment(Pos.CENTER);
         headerBox.getChildren().add(header);
-        this.root.getChildren().add(headerBox);
+//        this.root.getChildren().add(headerBox);
+        heightRegion.getChildren().add(headerBox);
     }
 
 
@@ -103,9 +134,11 @@ public class MenuView extends Application {
         this.menuScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.menuScene.setFill(crinklePattern(0.3));
         this.menuScene.getStylesheets().add(css);
-
-        addLevels();
-        addHeader();
+        VBox heightRegion = new VBox();
+        heightRegion.setPrefHeight(this.screenHeight);
+        addHeader(heightRegion);
+        addLevels(heightRegion);
+        this.root.getChildren().add(heightRegion);
 
         stage.setScene(this.menuScene);
         stage.setTitle("Menu");
