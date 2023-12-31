@@ -81,7 +81,12 @@ public class LevelView {
         stroke2.setStroke(iconColor);
         stroke2.setStrokeWidth(strokeWidth);
         stroke2.setStrokeLineCap(StrokeLineCap.ROUND);
-        Shape[] icon = {stroke2, stroke1};
+
+        //enhance hit-zone by adding invisible square around the cross
+        Rectangle hiddenHitZone = new Rectangle(screenWidth-65, 30, 40, 40);
+        hiddenHitZone.setFill(Color.TRANSPARENT);
+
+        Shape[] icon = {hiddenHitZone,stroke2, stroke1};
         return icon;
     }
 
@@ -219,7 +224,7 @@ public class LevelView {
     public Scene start() {
         Image img = new Image(this.srcImage);
         this.root = new Group();
-        this.root.getChildren().addAll(this.initializeImg(img, 7, 7));
+        this.root.getChildren().addAll(this.initializeImg(img, 4, 4));
         controlButtons();
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         return this.gameScene;

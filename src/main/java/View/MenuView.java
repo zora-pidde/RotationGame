@@ -69,7 +69,7 @@ public class MenuView extends Application {
                 level.setSrcImage(imgSrc);
                 Scene levelScene = level.start();
                 stage.setScene(levelScene);
-                stage.setTitle("Level 1: "+imgSrc.substring(0,imgSrc.length()-4));
+                stage.setTitle("Level: "+imgSrc.substring(0,imgSrc.length()-4));
                 stage.show();
             }
         }));
