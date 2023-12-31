@@ -10,16 +10,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
@@ -34,15 +30,6 @@ public class MenuView extends Application {
 
     private LevelView level;
     String css = this.getClass().getResource("/styles.css").toExternalForm();
-
-    /*----CONSTRUCTOR----*/
-
-//    public MenuView(Stage stage, int width, int height, GameView level){
-//        this.stage = stage;
-//        this.stage.setTitle("Menu");
-//        this.menuScene = new Scene(new Group(), width, height);
-//        this.level = level;
-//    }
 
     /*----GETTER&SETTER---*/
     public Stage getStage(){

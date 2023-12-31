@@ -3,7 +3,10 @@ package View;
 import javafx.animation.FadeTransition;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.*;
@@ -13,6 +16,7 @@ import javafx.geometry.*;
 import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
 import javafx.util.Duration;
+
 
 public class LevelView {
 
@@ -29,6 +33,8 @@ public class LevelView {
     private String srcImage;
 
     private MenuView menu;
+
+    String css = this.getClass().getResource("/styles.css").toExternalForm();
 
     /*----CONSTRUCTOR----*/
 
@@ -137,13 +143,23 @@ public class LevelView {
 
     /*----WIN-MESSAGE----*/
 
-    public void showWinMessage(){
-        Text text = new Text("Congratulations!\nYou Won");
-        text.setX(this.screenWidth/2);
-        text.setY(this.screenHeight/2);
-        text.setFill(Color.WHITE);
+    public HBox showWinMessage(){
+        HBox winBox = new HBox();
+        winBox.setPrefWidth(this.screenWidth);
+        winBox.setAlignment(Pos.CENTER);
+        Label text = new Label("Congratulations!\nYou Won");
+        text.setTextFill(Color.WHITE);
         text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
-        this.root.getChildren().add(text);
+        text.setTextAlignment(TextAlignment.CENTER);
+        winBox.getChildren().add(text);
+
+        this.root.getChildren().add(winBox);
+        winBox.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                root.getChildren().remove(winBox);
+            }
+        }));
+        return winBox;
     }
 
     /*----SINGLE-TILE-LOGIC----*/
@@ -158,7 +174,12 @@ public class LevelView {
         }
         imgV.setRotate(rotation);
         if(this.correctTiles == this.sectionCount){
-            showWinMessage();
+            HBox winBox = showWinMessage();
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(2000), winBox);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+            fadeOut.setOnFinished(e -> root.getChildren().remove(winBox));
+            fadeOut.play();
         }
     }
 
@@ -224,9 +245,11 @@ public class LevelView {
     public Scene start() {
         Image img = new Image(this.srcImage);
         this.root = new Group();
-        this.root.getChildren().addAll(this.initializeImg(img, 4, 4));
+        this.root.getChildren().addAll(this.initializeImg(img, 2, 2));
         controlButtons();
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
+        this.gameScene.getStylesheets().add(css);
         return this.gameScene;
     }
+
 }
