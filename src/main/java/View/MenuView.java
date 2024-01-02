@@ -27,12 +27,8 @@ public class MenuView extends Application {
     private int screenHeight = 700;
 
     private LevelView level;
-    String css = this.getClass().getResource("/styles.css").toExternalForm();
-
-    /*----GETTER&SETTER---*/
-    public Stage getStage(){
-        return this.stage;
-    }
+    String css =
+        this.getClass().getResource("/styles.css").toExternalForm();
 
     public void menuCallback(){
         this.stage.setScene(this.menuScene);
@@ -61,23 +57,6 @@ public class MenuView extends Application {
         return imgV;
     }
 
-//    public void addLevels(){
-//        int size = 200;
-//        int distance = 10;
-//        int posX = distance;
-//        ImageView imgV1 = applyLevel("level2.png");
-//        ImageView imgV2 = applyLevel("level1.png");
-//        ImageView imgV3 = applyLevel("level3.png");
-//        ImageView[] imgVs = {imgV1, imgV2, imgV3};
-//        for(int i = 0; i < imgVs.length; i++){
-//            imgVs[i].setFitWidth(size);
-//            imgVs[i].setFitHeight(size);
-//            imgVs[i].setY(50);
-//            imgVs[i].setX(posX);
-//            posX += size + distance;
-//        }
-//        this.root.getChildren().addAll(imgVs);
-//    }
 
     public void addLevels(VBox heightRegion){
         int spacing = 15;
