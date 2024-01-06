@@ -36,6 +36,7 @@ public class LevelView {
 
     private MenuView menu;
 
+    private Color controlColor = Color.WHITE;
 
     String css = this.getClass().getResource("/styles.css").toExternalForm();
 
@@ -60,35 +61,35 @@ public class LevelView {
     }
 
     /*----CONTROL-BUTTON-GRAPHICS----*/
-    private Shape[] hintIcon(){
-        Color iconColor = Color.WHITE;
+    private Group hintIcon(){
+        Group icon = new Group();
         int strokeWidth = 5;
 
         Circle lensCorpus = new Circle(50, 50, 15);
         lensCorpus.setFill(Color.TRANSPARENT);
-        lensCorpus.setStroke(iconColor);
+        lensCorpus.setStroke(controlColor);
         lensCorpus.setStrokeWidth(strokeWidth);
 
         Line lensGrip = new Line(30, 75, 40, 62);
-        lensGrip.setStroke(iconColor);
+        lensGrip.setStroke(controlColor);
         lensGrip.setStrokeWidth(strokeWidth);
         lensGrip.setStrokeLineCap(StrokeLineCap.ROUND);
-        Shape[] icon = {lensCorpus, lensGrip};
+        icon.getChildren().addAll(lensCorpus, lensGrip);
         return icon;
     }
 
     //create rotation-Icon: one circle with a down-arrow on circumference (length of arrow-point is 0.5*radius)
-    private Shape[] rotateIcon(int centerX, int centerY, int radius){
-        Color iconColor = Color.WHITE;
+    private Group rotateIcon(int centerX, int centerY, int radius){
         int strokeWidth = radius/3;
+        Group icon = new Group();
 
         Circle rotation = new Circle(centerX, centerY, radius);
         rotation.setFill(Color.TRANSPARENT);
-        rotation.setStroke(iconColor);
+        rotation.setStroke(this.controlColor);
         rotation.setStrokeWidth(strokeWidth);
 
         Line stroke1 = new Line(centerX+radius, centerY,centerX+radius*1.5, centerY-radius*0.5);
-        stroke1.setStroke(iconColor);
+        stroke1.setStroke(this.controlColor);
         stroke1.setStrokeWidth(strokeWidth);
         stroke1.setStrokeLineCap(StrokeLineCap.ROUND);
         Rotate rotate = new Rotate();
@@ -98,26 +99,26 @@ public class LevelView {
         stroke1.getTransforms().addAll(rotate);
 
         Line stroke2 = new Line(centerX+radius, centerY, centerX+radius*0.5, centerY-radius*0.5);
-        stroke2.setStroke(iconColor);
+        stroke2.setStroke(this.controlColor);
         stroke2.setStrokeWidth(strokeWidth);
         stroke2.setStrokeLineCap(StrokeLineCap.ROUND);
         stroke2.getTransforms().addAll(rotate);
 
-        Shape[] icon = {rotation, stroke1, stroke2};
+        icon.getChildren().addAll(rotation, stroke1, stroke2);
         return icon;
     }
 
-    private Shape[] exitIcon(){
-        Color iconColor = Color.WHITE;
+    private Group exitIcon(){
         int strokeWidth = 5;
+        Group icon = new Group();
 
         Line stroke1 = new Line(screenWidth-60, 65, screenWidth-30, 35);
-        stroke1.setStroke(iconColor);
+        stroke1.setStroke(this.controlColor);
         stroke1.setStrokeWidth(strokeWidth);
         stroke1.setStrokeLineCap(StrokeLineCap.ROUND);
 
         Line stroke2 = new Line(screenWidth-60, 35, screenWidth-30, 65);
-        stroke2.setStroke(iconColor);
+        stroke2.setStroke(this.controlColor);
         stroke2.setStrokeWidth(strokeWidth);
         stroke2.setStrokeLineCap(StrokeLineCap.ROUND);
 
@@ -125,7 +126,7 @@ public class LevelView {
         Rectangle hiddenHitZone = new Rectangle(screenWidth-65, 30, 40, 40);
         hiddenHitZone.setFill(Color.TRANSPARENT);
 
-        Shape[] icon = {hiddenHitZone,stroke2, stroke1};
+        icon.getChildren().addAll(hiddenHitZone,stroke2, stroke1);
         return icon;
     }
 
@@ -137,7 +138,7 @@ public class LevelView {
                 Text text = new Text("Correct Tiles: "+correctTiles);
                 text.setX(30);
                 text.setY(30);
-                text.setFill(Color.WHITE);
+                text.setFill(controlColor);
                 text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
 
                 FadeTransition fadeOut = new FadeTransition(Duration.millis(2000), text);
@@ -164,15 +165,11 @@ public class LevelView {
     }
 
     public void controlButtons(){
-        Group hintButton = new Group();
-        hintButton.getChildren().addAll(hintIcon());
+        Group hintButton = hintIcon();
         giveHint(hintButton);
-        Group exitButton = new Group();
-        exitButton.getChildren().addAll(exitIcon());
+        Group exitButton = exitIcon();
         exitToMenu(exitButton);
-//        Group rotationButton = new Group();
-//        rotationButton.getChildren().addAll(rotateIcon(70, 70, 10));
-        root.getChildren().addAll(hintButton, exitButton);//,rotationButton);
+        root.getChildren().addAll(hintButton, exitButton);
     }
 
     /*----WIN-MESSAGE----*/
@@ -182,7 +179,7 @@ public class LevelView {
         winBox.setPrefWidth(this.screenWidth);
         winBox.setAlignment(Pos.CENTER);
         Label text = new Label("Congratulations!\nYou Won");
-        text.setTextFill(Color.WHITE);
+        text.setTextFill(this.controlColor);
         text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
         text.setTextAlignment(TextAlignment.CENTER);
         winBox.getChildren().add(text);
@@ -247,7 +244,6 @@ public class LevelView {
     }
 
     public void initializeImg(Image img, int xTileCount, int yTileCount){
-//        ImageView[] imgViews = new ImageView[xTileCount*yTileCount];
         this.sectionCount = xTileCount * yTileCount;
         this.correctTiles = sectionCount;
         int sectionWidth = (int)this.screenWidth/xTileCount;
@@ -264,9 +260,7 @@ public class LevelView {
                 Group imgV = new Group();
                 imgV.getChildren().add(imgVInitial);
 
-                Group rotateIcon = new Group();
-                Shape[] icon = rotateIcon((int) (posX*sectionWidth+0.5*sectionWidth), (int)(posY*sectionHeight+0.5*sectionHeight), sectionWidth/4);
-                rotateIcon.getChildren().addAll(icon);
+                Group rotateIcon = rotateIcon((int) (posX*sectionWidth+0.5*sectionWidth), (int)(posY*sectionHeight+0.5*sectionHeight), sectionWidth/4);
                 rotateIcon.setOpacity(0.2);
                 rotateIcon.setVisible(false);
                 imgV.getChildren().add(rotateIcon);
