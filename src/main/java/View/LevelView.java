@@ -38,6 +38,10 @@ public class LevelView {
 
     private Color controlColor = Color.WHITE;
 
+    private int sectionsX = 2;
+    private int sectionsY = 2;
+    private Image img;
+
     String css = this.getClass().getResource("/styles.css").toExternalForm();
 
     /*----CONSTRUCTOR----*/
@@ -307,6 +311,59 @@ public class LevelView {
 
     }
 
+    public void sectioningRepresentation(int size, int maxOptions, HBox parent){
+        int strokeWidth = size/10;
+        for(int optionCount = 2; optionCount <= maxOptions; optionCount++) {
+            Group optionIcon = new Group();
+            Rectangle fullSize = new Rectangle(0, 0, size, size);
+            fullSize.setFill(controlColor);
+            optionIcon.getChildren().addAll(fullSize);
+            for (int x = 0; x <= optionCount; x++) {
+                Line verticalLine = new Line(x * size / optionCount, 0, x * size / optionCount, size);
+                verticalLine.setStroke(Color.DARKGREY);
+                verticalLine.setStrokeWidth(strokeWidth);
+                optionIcon.getChildren().add(verticalLine);
+            }
+            for (int y = 0; y <= optionCount; y++) {
+                Line horizontalLine = new Line(0, y * size / optionCount, size, y * size / optionCount);
+                horizontalLine.setStroke(Color.DARKGREY);
+                horizontalLine.setStrokeWidth(strokeWidth);
+                optionIcon.getChildren().add(horizontalLine);
+            }
+            int finalOptionCount = optionCount;
+            EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent e) {
+                    sectionsX = finalOptionCount;
+                    sectionsY = finalOptionCount;
+                    initializeImg(img, finalOptionCount, finalOptionCount);
+                    controlButtons();
+                }
+            };
+            optionIcon.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandler);
+            parent.getChildren().add(optionIcon);
+        }
+    }
+
+    public void chooseSectioning(Image img){
+        ImageView setSectionMenu = new ImageView(img);
+        setSectionMenu.setOpacity(0.6);
+        setSectionMenu.setFitWidth(this.screenWidth);
+        setSectionMenu.setFitHeight(this.screenHeight);
+
+        int borderDist = 20;
+        HBox options = new HBox(borderDist);
+
+        options.setPadding(new Insets(borderDist, borderDist, borderDist, borderDist));
+        options.setMaxWidth(screenWidth);
+        options.setMinWidth(screenWidth);
+        options.setPrefHeight(screenHeight);
+        options.setAlignment(Pos.CENTER);
+        sectioningRepresentation(borderDist*4,4, options);
+
+        root.getChildren().addAll(setSectionMenu, options);
+    }
+
 
 
 
@@ -317,10 +374,11 @@ public class LevelView {
 
     public Scene start() {
         Image img = new Image(this.srcImage);
+        this.img = img;
         this.root = new Group();
-//        this.root.getChildren().addAll(this.initializeImg(img, 2, 2));
-        this.initializeImg(img, 2, 2);
-        controlButtons();
+        chooseSectioning(img);
+//        initializeImg(img, this.sectionsX, this.sectionsY);
+//        controlButtons();
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.gameScene.getStylesheets().add(css);
         return this.gameScene;
