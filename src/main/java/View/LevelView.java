@@ -38,9 +38,9 @@ public class LevelView {
 
     private Color controlColor = Color.WHITE;
 
-    private int sectionsX = 2;
-    private int sectionsY = 2;
     private Image img;
+
+    private Group exitButton;
 
     String css = this.getClass().getResource("/styles.css").toExternalForm();
 
@@ -169,11 +169,12 @@ public class LevelView {
     }
 
     public void controlButtons(){
-        Group hintButton = hintIcon();
-        giveHint(hintButton);
+//        Group hintButton = hintIcon();
+//        giveHint(hintButton);
         Group exitButton = exitIcon();
         exitToMenu(exitButton);
-        root.getChildren().addAll(hintButton, exitButton);
+        this.exitButton = exitButton;
+        root.getChildren().addAll(exitButton);//(hintButton, exitButton);
     }
 
     /*----WIN-MESSAGE----*/
@@ -334,10 +335,11 @@ public class LevelView {
             EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent e) {
-                    sectionsX = finalOptionCount;
-                    sectionsY = finalOptionCount;
                     initializeImg(img, finalOptionCount, finalOptionCount);
-                    controlButtons();
+                    exitButton.toFront();
+                    Group hintButton = hintIcon();
+                    giveHint(hintButton);
+                    root.getChildren().add(hintButton);
                 }
             };
             optionIcon.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandler);
@@ -359,8 +361,8 @@ public class LevelView {
         options.setMinWidth(screenWidth);
         options.setPrefHeight(screenHeight);
         options.setAlignment(Pos.CENTER);
-        sectioningRepresentation(borderDist*4,4, options);
 
+        sectioningRepresentation(borderDist*4,4, options);
         root.getChildren().addAll(setSectionMenu, options);
     }
 
@@ -378,7 +380,7 @@ public class LevelView {
         this.root = new Group();
         chooseSectioning(img);
 //        initializeImg(img, this.sectionsX, this.sectionsY);
-//        controlButtons();
+        controlButtons();
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.gameScene.getStylesheets().add(css);
         return this.gameScene;
