@@ -42,9 +42,20 @@ public class MenuView extends Application {
      return new LinearGradient(0, 0.3, 10, 0.3, false, CycleMethod.REPEAT, stops);
     }
 
-    public ImageView applyLevel(String imgSrc){
+    public ImageView applyLevel(String imgSrc, int size){
         Image img = new Image(imgSrc);
         ImageView imgV = new ImageView(img);
+        //check if (close to) squared
+        if(Math.abs(img.getWidth()-img.getHeight()) < img.getWidth()*0.1) {
+            imgV.setFitWidth(size);
+            imgV.setFitHeight(size);
+        } else if(img.getWidth() < img.getHeight()) {
+            imgV.setFitHeight(size);
+            imgV.setFitWidth(size * (img.getWidth()/img.getHeight()));
+        } else {
+            imgV.setFitWidth(size);
+            imgV.setFitHeight(size * (img.getHeight()/img.getWidth()));
+        }
         imgV.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 level.setSrcImage(imgSrc);
@@ -63,7 +74,7 @@ public class MenuView extends Application {
         int borderDist = 10;
         int size = 200;
         // CAREFUL: if adding new pictures need to reset this number
-        int nPics = 4;
+        int nPics = 5;
         int nPicsPerRow = (this.screenWidth - 2* borderDist + spacing)/(size + spacing);
         int nRows = Math.ceilDiv(nPics, nPicsPerRow);
         System.out.println("number of Pics per Row: "+nPicsPerRow);
@@ -81,9 +92,9 @@ public class MenuView extends Application {
                 if (i * nPicsPerRow + (j + 1) > nPics) {
                     break;
                 }
-                ImageView imgV = applyLevel("level" + (i * nPicsPerRow + (j + 1)) + ".png");
-                imgV.setFitWidth(size);
-                imgV.setFitHeight(size);
+                ImageView imgV = applyLevel("level" + (i * nPicsPerRow + (j + 1)) + ".png", size);
+//                imgV.setFitWidth(size);
+//                imgV.setFitHeight(size);
                 levels.getChildren().add(imgV);
             }
             heightRegion.getChildren().add(levels);
