@@ -2,6 +2,7 @@ package View;
 
 import javafx.animation.FadeTransition;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -34,6 +35,7 @@ public class LevelView {
     private String srcImage;
 
     private MenuView menu;
+
 
     String css = this.getClass().getResource("/styles.css").toExternalForm();
 
@@ -78,7 +80,7 @@ public class LevelView {
     //create rotation-Icon: one circle with a down-arrow on circumference (length of arrow-point is 0.5*radius)
     private Shape[] rotateIcon(int centerX, int centerY, int radius){
         Color iconColor = Color.WHITE;
-        int strokeWidth = 2;
+        int strokeWidth = radius/3;
 
         Circle rotation = new Circle(centerX, centerY, radius);
         rotation.setFill(Color.TRANSPARENT);
@@ -90,7 +92,7 @@ public class LevelView {
         stroke1.setStrokeWidth(strokeWidth);
         stroke1.setStrokeLineCap(StrokeLineCap.ROUND);
         Rotate rotate = new Rotate();
-        rotate.setAngle(338.2);
+        rotate.setAngle(348);
         rotate.setPivotX(centerX+radius);
         rotate.setPivotY(centerY);
         stroke1.getTransforms().addAll(rotate);
@@ -244,8 +246,8 @@ public class LevelView {
         return section(img, sectionAmountPerLine, sectionAmountPerLine, pos);
     }
 
-    public ImageView[] initializeImg(Image img, int xTileCount, int yTileCount){
-        ImageView[] imgViews = new ImageView[xTileCount*yTileCount];
+    public void initializeImg(Image img, int xTileCount, int yTileCount){
+//        ImageView[] imgViews = new ImageView[xTileCount*yTileCount];
         this.sectionCount = xTileCount * yTileCount;
         this.correctTiles = sectionCount;
         int sectionWidth = (int)this.screenWidth/xTileCount;
@@ -256,30 +258,39 @@ public class LevelView {
                 int posX = pos % xTileCount;
                 int posY = Math.floorDiv(pos, yTileCount);
 
-                ImageView imgV =  section(img, xTileCount, yTileCount,pos);// (x * yTileCount + y));
-                initializeTile(imgV);
+                ImageView imgVInitial =  section(img, xTileCount, yTileCount,pos);// (x * yTileCount + y));
+                initializeTile(imgVInitial);
+
+                Group imgV = new Group();
+                imgV.getChildren().add(imgVInitial);
+
+                Group rotateIcon = new Group();
+                Shape[] icon = rotateIcon((int) (posX*sectionWidth+0.5*sectionWidth), (int)(posY*sectionHeight+0.5*sectionHeight), sectionWidth/4);
+                rotateIcon.getChildren().addAll(icon);
+                rotateIcon.setOpacity(0.2);
+                rotateIcon.setVisible(false);
+                imgV.getChildren().add(rotateIcon);
+
+
+                System.out.println("visible: "+rotateIcon.isVisible());
                 EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent e) {
-                        rotate(imgV, 1);
+                        rotateIcon.setVisible(false);
+                        rotate(imgVInitial, 1);
                     }
                 };
 
-                Group rotateIcon = new Group();
+
                 EventHandler<MouseEvent> mouseOverHandler = new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-
-                        rotateIcon.getChildren().addAll(rotateIcon((int) (posX*sectionWidth+0.5*sectionWidth), (int)(posY*sectionHeight+0.5*sectionHeight), sectionWidth/20));
                         FadeTransition fadeOut = new FadeTransition(Duration.millis(1000), rotateIcon);
-                        fadeOut.setFromValue(1.0);
+                        fadeOut.setFromValue(0.2);
                         fadeOut.setToValue(0.0);
-                        fadeOut.setOnFinished(e -> root.getChildren().remove(rotateIcon));
-
-                        try{
-                            root.getChildren().add(rotateIcon);
-                            fadeOut.play();
-                        } catch (Exception except){
+                        fadeOut.setOnFinished(e -> rotateIcon.setVisible(false));
+                        if(!rotateIcon.isVisible()) {
+                            rotateIcon.setVisible(true);
                             fadeOut.play();
                         }
                     }
@@ -288,21 +299,18 @@ public class LevelView {
                 EventHandler<MouseEvent> mouseLeaveHandler = new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-                        try{
-                            root.getChildren().remove(rotateIcon);
-                        } catch (Exception except){
-                        }
+                        rotateIcon.setVisible(false);
                     }
                 };
 
+                imgV.addEventHandler(MouseEvent.MOUSE_ENTERED, mouseOverHandler);
+                imgV.addEventHandler(MouseEvent.MOUSE_EXITED, mouseLeaveHandler);
                 imgV.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandler);
-                imgV.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, mouseOverHandler);
-                imgV.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, mouseLeaveHandler);
-                imgViews[(x * yTileCount + y)] = imgV;
+
+                root.getChildren().addAll(imgV);
             }
         }
 
-        return imgViews;
     }
 
 
@@ -316,7 +324,8 @@ public class LevelView {
     public Scene start() {
         Image img = new Image(this.srcImage);
         this.root = new Group();
-        this.root.getChildren().addAll(this.initializeImg(img, 5, 5));
+//        this.root.getChildren().addAll(this.initializeImg(img, 2, 2));
+        this.initializeImg(img, 2, 2);
         controlButtons();
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.gameScene.getStylesheets().add(css);
