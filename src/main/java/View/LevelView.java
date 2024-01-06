@@ -37,6 +37,7 @@ public class LevelView {
     private MenuView menu;
 
     private Color controlColor = Color.WHITE;
+    private Color controlColor2 = Color.DARKGREY;
 
     private Image img;
 
@@ -69,6 +70,16 @@ public class LevelView {
         Group icon = new Group();
         int strokeWidth = 5;
 
+        Circle lensCorpusBack = new Circle(50, 50, 15);
+        lensCorpusBack.setFill(Color.TRANSPARENT);
+        lensCorpusBack.setStroke(this.controlColor2);
+        lensCorpusBack.setStrokeWidth(strokeWidth*3);
+
+        Line lensGripBack = new Line(30, 75, 40, 62);
+        lensGripBack.setStroke(this.controlColor2);
+        lensGripBack.setStrokeWidth(strokeWidth*3);
+        lensGripBack.setStrokeLineCap(StrokeLineCap.ROUND);
+
         Circle lensCorpus = new Circle(50, 50, 15);
         lensCorpus.setFill(Color.TRANSPARENT);
         lensCorpus.setStroke(controlColor);
@@ -78,7 +89,7 @@ public class LevelView {
         lensGrip.setStroke(controlColor);
         lensGrip.setStrokeWidth(strokeWidth);
         lensGrip.setStrokeLineCap(StrokeLineCap.ROUND);
-        icon.getChildren().addAll(lensCorpus, lensGrip);
+        icon.getChildren().addAll(lensCorpusBack, lensGripBack, lensCorpus, lensGrip);
         return icon;
     }
 
@@ -116,6 +127,16 @@ public class LevelView {
         int strokeWidth = 5;
         Group icon = new Group();
 
+        Line strokeBack1 = new Line(screenWidth-60, 65, screenWidth-30, 35);
+        strokeBack1.setStroke(this.controlColor2);
+        strokeBack1.setStrokeWidth(strokeWidth*3);
+        strokeBack1.setStrokeLineCap(StrokeLineCap.ROUND);
+
+        Line strokeBack2 = new Line(screenWidth-60, 35, screenWidth-30, 65);
+        strokeBack2.setStroke(this.controlColor2);
+        strokeBack2.setStrokeWidth(strokeWidth*3);
+        strokeBack2.setStrokeLineCap(StrokeLineCap.ROUND);
+
         Line stroke1 = new Line(screenWidth-60, 65, screenWidth-30, 35);
         stroke1.setStroke(this.controlColor);
         stroke1.setStrokeWidth(strokeWidth);
@@ -130,7 +151,7 @@ public class LevelView {
         Rectangle hiddenHitZone = new Rectangle(screenWidth-65, 30, 40, 40);
         hiddenHitZone.setFill(Color.TRANSPARENT);
 
-        icon.getChildren().addAll(hiddenHitZone,stroke2, stroke1);
+        icon.getChildren().addAll(hiddenHitZone,strokeBack1, strokeBack2, stroke2, stroke1);
         return icon;
     }
 
@@ -313,7 +334,7 @@ public class LevelView {
     }
 
     public void sectioningRepresentation(int size, int maxOptions, HBox parent){
-        int strokeWidth = size/10;
+        int strokeWidth = size/5;
         for(int optionCount = 2; optionCount <= maxOptions; optionCount++) {
             Group optionIcon = new Group();
             Rectangle fullSize = new Rectangle(0, 0, size, size);
@@ -321,14 +342,14 @@ public class LevelView {
             optionIcon.getChildren().addAll(fullSize);
             for (int x = 0; x <= optionCount; x++) {
                 Line verticalLine = new Line(x * size / optionCount, 0, x * size / optionCount, size);
-                verticalLine.setStroke(Color.DARKGREY);
-                verticalLine.setStrokeWidth(strokeWidth);
+                verticalLine.setStroke(this.controlColor2);
+                verticalLine.setStrokeWidth(strokeWidth/optionCount);
                 optionIcon.getChildren().add(verticalLine);
             }
             for (int y = 0; y <= optionCount; y++) {
                 Line horizontalLine = new Line(0, y * size / optionCount, size, y * size / optionCount);
-                horizontalLine.setStroke(Color.DARKGREY);
-                horizontalLine.setStrokeWidth(strokeWidth);
+                horizontalLine.setStroke(this.controlColor2);
+                horizontalLine.setStrokeWidth(strokeWidth/optionCount);
                 optionIcon.getChildren().add(horizontalLine);
             }
             int finalOptionCount = optionCount;
@@ -362,7 +383,7 @@ public class LevelView {
         options.setPrefHeight(screenHeight);
         options.setAlignment(Pos.CENTER);
 
-        sectioningRepresentation(borderDist*4,4, options);
+        sectioningRepresentation(borderDist*4,6, options);
         root.getChildren().addAll(setSectionMenu, options);
     }
 
