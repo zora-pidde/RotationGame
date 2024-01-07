@@ -2,11 +2,9 @@ package View;
 
 import javafx.animation.FadeTransition;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -28,6 +26,8 @@ public class LevelView {
     Scene gameScene;
     private int screenWidth;
     private int screenHeight;
+
+    private double proportion;
 
     private int correctTiles = 0;
     private int sectionCount = 0;
@@ -59,6 +59,7 @@ public class LevelView {
     public void setScreenSize(int width, int height) {
         this.screenWidth = width;
         this.screenHeight = height;
+        this.proportion = (float) width/height;
     }
 
     public void setMenuView(MenuView menu){
@@ -247,18 +248,26 @@ public class LevelView {
     /*----INITIALIZE-GAME----*/
 
     public ImageView section(Image img, int xSectionAmount, int ySectionAmount, int pos) {
-        int sectionWidth = (int)this.screenWidth/xSectionAmount;
-        int sectionHeight = (int) this.screenHeight/ySectionAmount;
+        double sectionSize;
+        double imgSectionSize;
+        if(img.getWidth() -img.getHeight() > 0.1 ){
+            //case longer Width
+            sectionSize = (float) this.screenHeight/ySectionAmount;
+            imgSectionSize = (float) img.getHeight()/ySectionAmount;
+        } else{
+            sectionSize = (float) this.screenWidth/xSectionAmount;
+            imgSectionSize = (float) img.getWidth()/ySectionAmount;
+        }
         int posX = pos % xSectionAmount;
-        int posY = Math.floorDiv(pos, ySectionAmount);
+        int posY = (pos-posX)/xSectionAmount;
+        System.out.println("Sections in Sectionize: posX: "+posX+", posY: "+posY);
         ImageView imgV = new ImageView(img);
-        imgV.setFitHeight(sectionWidth);
-        imgV.setFitWidth(sectionHeight);
-        imgV.setX(sectionWidth * posX);
-        imgV.setY(sectionHeight * posY);
-        int imgSectionWidth = (int) img.getWidth()/xSectionAmount;
-        int imgSectionHeight =  (int) img.getHeight()/ySectionAmount;
-        Rectangle2D imgSection = new Rectangle2D(imgSectionWidth * posX,imgSectionHeight *posY, imgSectionWidth, imgSectionHeight);
+        imgV.setFitHeight(sectionSize);
+        imgV.setFitWidth(sectionSize);
+        imgV.setX(sectionSize * posX);
+        imgV.setY(sectionSize * posY);
+
+        Rectangle2D imgSection = new Rectangle2D(imgSectionSize * posX,imgSectionSize *posY, imgSectionSize, imgSectionSize);
         imgV.setViewport(imgSection);
         return imgV;
     }
@@ -272,27 +281,37 @@ public class LevelView {
     public void initializeImg(Image img, int xTileCount, int yTileCount){
         this.sectionCount = xTileCount * yTileCount;
         this.correctTiles = sectionCount;
-        int sectionWidth = (int)this.screenWidth/xTileCount;
-        int sectionHeight = (int) this.screenHeight/yTileCount;
+        System.out.println("all tiles#: "+sectionCount);
+        //shorter side determines size, as longer side will be clipped to fit
+        double sectionSize;
+        if(img.getWidth() -img.getHeight() > 0.1 ){
+            //case longer Width
+            sectionSize = (int) this.screenHeight/yTileCount;
+        } else{
+            sectionSize = (int) this.screenWidth/xTileCount;
+        }
+//        int sectionWidth = (int)this.screenWidth/xTileCount;
+//        int sectionHeight = (int) this.screenHeight/yTileCount;
+        System.out.println("sectionSize: "+sectionSize);
         for(int x = 0; x < xTileCount; x++){
             for(int y = 0; y < yTileCount; y++){
                 int pos = (x * yTileCount + y);
                 int posX = pos % xTileCount;
-                int posY = Math.floorDiv(pos, yTileCount);
+                int posY = (pos-posX)/xTileCount;
+                System.out.println("pos: "+pos+", xPos: "+posX+", yPos: "+posY);
 
-                ImageView imgVInitial =  section(img, xTileCount, yTileCount,pos);// (x * yTileCount + y));
+                ImageView imgVInitial =  section(img, xTileCount, yTileCount,pos);
                 initializeTile(imgVInitial);
 
                 Group imgV = new Group();
                 imgV.getChildren().add(imgVInitial);
 
-                Group rotateIcon = rotateIcon((int) (posX*sectionWidth+0.5*sectionWidth), (int)(posY*sectionHeight+0.5*sectionHeight), sectionWidth/4);
+//                Group rotateIcon = rotateIcon((int) (posX*sectionWidth+0.5*sectionWidth), (int)(posY*sectionHeight+0.5*sectionHeight), sectionWidth/4);
+                Group rotateIcon = rotateIcon((int) (posX*sectionSize+0.5*sectionSize), (int)(posY*sectionSize+0.5*sectionSize), (int)sectionSize/4);
                 rotateIcon.setOpacity(0.2);
                 rotateIcon.setVisible(false);
                 imgV.getChildren().add(rotateIcon);
 
-
-                System.out.println("visible: "+rotateIcon.isVisible());
                 EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent e) {
@@ -337,26 +356,42 @@ public class LevelView {
         int strokeWidth = size/5;
         for(int optionCount = 2; optionCount <= maxOptions; optionCount++) {
             Group optionIcon = new Group();
-            Rectangle fullSize = new Rectangle(0, 0, size, size);
+            double sizeX = size;
+            double sizeY = size;
+            int optionsX = optionCount;
+            int optionsY = optionCount;
+            if(this.screenWidth > this.screenHeight){
+                sizeY /= proportion;
+                System.out.println("larger Width, sizeY: "+sizeY);
+                optionsX = Math.floorDiv((int)sizeX, (int)((float) sizeY/optionCount)) ;
+            } else if(this.screenHeight > this.screenWidth){
+                sizeX *= proportion;
+                System.out.println("larger Height, sizeX: "+sizeX+", sizeY: "+sizeY);
+                System.out.println("SegmentSize: "+(float) sizeX/optionCount);
+                optionsY = Math.floorDiv((int)sizeY, (int)((float)sizeX/optionCount)) ;
+            }
+            Rectangle fullSize = new Rectangle(0, 0, sizeX, sizeY);
             fullSize.setFill(controlColor);
             optionIcon.getChildren().addAll(fullSize);
-            for (int x = 0; x <= optionCount; x++) {
-                Line verticalLine = new Line(x * size / optionCount, 0, x * size / optionCount, size);
+            for (int x = 0; x <= optionsX; x++) {
+                Line verticalLine = new Line(x * sizeX / optionsX, 0, x * sizeX / optionsX, sizeY);
                 verticalLine.setStroke(this.controlColor2);
-                verticalLine.setStrokeWidth(strokeWidth/optionCount);
+                verticalLine.setStrokeWidth(strokeWidth/Math.max(optionsX, optionsY));
                 optionIcon.getChildren().add(verticalLine);
             }
-            for (int y = 0; y <= optionCount; y++) {
-                Line horizontalLine = new Line(0, y * size / optionCount, size, y * size / optionCount);
+            for (int y = 0; y <= optionsY; y++) {
+                Line horizontalLine = new Line(0, y * sizeY / optionsY, sizeX, y * sizeY / optionsY);
                 horizontalLine.setStroke(this.controlColor2);
-                horizontalLine.setStrokeWidth(strokeWidth/optionCount);
+                horizontalLine.setStrokeWidth(strokeWidth/Math.max(optionsX,optionsY));
                 optionIcon.getChildren().add(horizontalLine);
             }
-            int finalOptionCount = optionCount;
+            int finalOptionsY = optionsY;
+            int finalOptionsX = optionsX;
             EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent e) {
-                    initializeImg(img, finalOptionCount, finalOptionCount);
+                    initializeImg(img, finalOptionsX, finalOptionsY);
+                    System.out.println("options: X: "+finalOptionsX+", Y: "+finalOptionsY);
                     exitButton.toFront();
                     Group hintButton = hintIcon();
                     giveHint(hintButton);
@@ -388,19 +423,16 @@ public class LevelView {
     }
 
 
-
-
-
     /*----OTHER----*/
-
-
 
     public Scene start() {
         Image img = new Image(this.srcImage);
+//        this.proportion = this.screenWidth/this.screenHeight;
+        System.out.println("screenheight: "+this.screenHeight);
+        System.out.println("screenwidth: "+this.screenWidth);
         this.img = img;
         this.root = new Group();
         chooseSectioning(img);
-//        initializeImg(img, this.sectionsX, this.sectionsY);
         controlButtons();
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.gameScene.getStylesheets().add(css);

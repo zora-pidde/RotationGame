@@ -46,19 +46,30 @@ public class MenuView extends Application {
         Image img = new Image(imgSrc);
         ImageView imgV = new ImageView(img);
         //check if (close to) squared
-        if(Math.abs(img.getWidth()-img.getHeight()) < img.getWidth()*0.1) {
+        double proportion = (float)img.getWidth()/img.getHeight();
+        System.out.println("image: "+imgSrc+", proportion: "+proportion);
+        int screenX = this.screenWidth;
+        int screenY = this.screenHeight;
+        if(Math.abs(proportion - 1) < 0.1) {
+            System.out.println("seen as squared");
             imgV.setFitWidth(size);
             imgV.setFitHeight(size);
+            System.out.println("screenWidth: "+screenWidth+", screenHeight: "+screenHeight);
         } else if(img.getWidth() < img.getHeight()) {
             imgV.setFitHeight(size);
-            imgV.setFitWidth(size * (img.getWidth()/img.getHeight()));
+            imgV.setFitWidth(size * proportion);
+            screenX = (int) (this.screenWidth*proportion);
         } else {
             imgV.setFitWidth(size);
-            imgV.setFitHeight(size * (img.getHeight()/img.getWidth()));
+            imgV.setFitHeight(size * 1/proportion);//(img.getHeight()/img.getWidth()));
+            screenY = (int)(this.screenHeight/proportion);
         }
+        int finalScreenX = screenX;
+        int finalScreenY = screenY;
         imgV.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 level.setSrcImage(imgSrc);
+                level.setScreenSize(finalScreenX, finalScreenY);
                 Scene levelScene = level.start();
                 stage.setScene(levelScene);
                 stage.setTitle("Level: "+imgSrc.substring(0,imgSrc.length()-4));
@@ -74,7 +85,7 @@ public class MenuView extends Application {
         int borderDist = 10;
         int size = 200;
         // CAREFUL: if adding new pictures need to reset this number
-        int nPics = 5;
+        int nPics = 8;
         int nPicsPerRow = (this.screenWidth - 2* borderDist + spacing)/(size + spacing);
         int nRows = Math.ceilDiv(nPics, nPicsPerRow);
         System.out.println("number of Pics per Row: "+nPicsPerRow);
@@ -93,8 +104,6 @@ public class MenuView extends Application {
                     break;
                 }
                 ImageView imgV = applyLevel("level" + (i * nPicsPerRow + (j + 1)) + ".png", size);
-//                imgV.setFitWidth(size);
-//                imgV.setFitHeight(size);
                 levels.getChildren().add(imgV);
             }
             heightRegion.getChildren().add(levels);
