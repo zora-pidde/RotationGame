@@ -288,8 +288,10 @@ public class LevelView {
         } else{
             sectionSize = (int) this.screenWidth/xTileCount;
         }
+        int translateX = (int) (screenWidth - sectionSize * xTileCount);
         this.screenWidth = (int) sectionSize * xTileCount;
         this.screenHeight = (int) sectionSize * yTileCount;
+        exitButton.setTranslateX(-translateX);
         menu.resetStageSize(screenWidth, screenHeight);
         for(int x = 0; x < xTileCount; x++){
             for(int y = 0; y < yTileCount; y++){
