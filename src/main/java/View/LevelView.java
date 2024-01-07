@@ -247,7 +247,7 @@ public class LevelView {
 
     /*----INITIALIZE-GAME----*/
 
-    public ImageView section(Image img, int xSectionAmount, int ySectionAmount, int pos) {
+    public ImageView section(Image img, int xSectionAmount, int ySectionAmount, int pos, double offsetX, double offsetY) {
         double sectionSize;
         double imgSectionSize;
         if(img.getWidth() -img.getHeight() > 0.1 ){
@@ -266,15 +266,9 @@ public class LevelView {
         imgV.setX(sectionSize * posX);
         imgV.setY(sectionSize * posY);
 
-        Rectangle2D imgSection = new Rectangle2D(imgSectionSize * posX,imgSectionSize *posY, imgSectionSize, imgSectionSize);
+        Rectangle2D imgSection = new Rectangle2D(imgSectionSize * posX +offsetX,imgSectionSize *posY +offsetY, imgSectionSize, imgSectionSize);
         imgV.setViewport(imgSection);
         return imgV;
-    }
-
-
-    //provide specific case for quadratic cases
-    public ImageView section(Image img, int sectionAmountPerLine, int pos) {
-        return section(img, sectionAmountPerLine, sectionAmountPerLine, pos);
     }
 
     public void initializeImg(Image img, int xTileCount, int yTileCount){
@@ -282,16 +276,25 @@ public class LevelView {
         this.correctTiles = sectionCount;
         //shorter side determines size, as longer side will be clipped to fit
         double sectionSize;
+
+        //calculate offset in order to take middle part of picture if clipping is necessary
+        double offsetX = 0;
+        double offsetY = 0;
+
         if(img.getWidth() -img.getHeight() > 0.1 ){
             //case longer Width
             sectionSize = (int) this.screenHeight/yTileCount;
+            int translateX = (int) (screenWidth - sectionSize * xTileCount);
+            exitButton.setTranslateX(-translateX);
+
+            offsetX = (screenWidth - xTileCount*sectionSize)/2;
         } else{
             sectionSize = (int) this.screenWidth/xTileCount;
+            offsetY = (screenHeight - yTileCount*sectionSize)/2;
         }
-        int translateX = (int) (screenWidth - sectionSize * xTileCount);
+
         this.screenWidth = (int) sectionSize * xTileCount;
         this.screenHeight = (int) sectionSize * yTileCount;
-        exitButton.setTranslateX(-translateX);
         menu.resetStageSize(screenWidth, screenHeight);
         for(int x = 0; x < xTileCount; x++){
             for(int y = 0; y < yTileCount; y++){
@@ -299,7 +302,7 @@ public class LevelView {
                 int posX = pos % xTileCount;
                 int posY = (pos-posX)/xTileCount;
 
-                ImageView imgVInitial =  section(img, xTileCount, yTileCount,pos);
+                ImageView imgVInitial =  section(img, xTileCount, yTileCount,pos, offsetX, offsetY);
                 initializeTile(imgVInitial);
 
                 Group imgV = new Group();
@@ -422,15 +425,10 @@ public class LevelView {
 
     public Scene start() {
         Image img = new Image(this.srcImage);
-//        this.proportion = this.screenWidth/this.screenHeight;
-        System.out.println("screenheight: "+this.screenHeight);
-        System.out.println("screenwidth: "+this.screenWidth);
         this.img = img;
         this.root = new Group();
         chooseSectioning(img);
         controlButtons();
-        System.out.println("screenheight after initialize: "+this.screenHeight);
-        System.out.println("screenwidth after initialize: "+this.screenWidth);
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.gameScene.getStylesheets().add(css);
         return this.gameScene;
