@@ -31,6 +31,8 @@ public class MenuView extends Application {
         this.getClass().getResource("/styles.css").toExternalForm();
 
     public void menuCallback(){
+        this.stage.setWidth(this.screenWidth);
+        this.stage.setHeight(this.screenHeight);
         this.stage.setScene(this.menuScene);
     }
 
@@ -47,14 +49,11 @@ public class MenuView extends Application {
         ImageView imgV = new ImageView(img);
         //check if (close to) squared
         double proportion = (float)img.getWidth()/img.getHeight();
-        System.out.println("image: "+imgSrc+", proportion: "+proportion);
         int screenX = this.screenWidth;
         int screenY = this.screenHeight;
         if(Math.abs(proportion - 1) < 0.1) {
-            System.out.println("seen as squared");
             imgV.setFitWidth(size);
             imgV.setFitHeight(size);
-            System.out.println("screenWidth: "+screenWidth+", screenHeight: "+screenHeight);
         } else if(img.getWidth() < img.getHeight()) {
             imgV.setFitHeight(size);
             imgV.setFitWidth(size * proportion);
@@ -79,6 +78,11 @@ public class MenuView extends Application {
         return imgV;
     }
 
+    public void resetStageSize(double width, double height){
+        this.stage.setWidth(width);
+        this.stage.setHeight(height);
+    }
+
 
     public void addLevels(VBox heightRegion){
         int spacing = 15;
@@ -88,8 +92,6 @@ public class MenuView extends Application {
         int nPics = 8;
         int nPicsPerRow = (this.screenWidth - 2* borderDist + spacing)/(size + spacing);
         int nRows = Math.ceilDiv(nPics, nPicsPerRow);
-        System.out.println("number of Pics per Row: "+nPicsPerRow);
-        System.out.println("number of Rows: "+nRows);
         for(int i = 0; i < nRows; i++) {
             System.out.println();
             HBox levels = new HBox(spacing);

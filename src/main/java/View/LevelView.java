@@ -260,7 +260,6 @@ public class LevelView {
         }
         int posX = pos % xSectionAmount;
         int posY = (pos-posX)/xSectionAmount;
-        System.out.println("Sections in Sectionize: posX: "+posX+", posY: "+posY);
         ImageView imgV = new ImageView(img);
         imgV.setFitHeight(sectionSize);
         imgV.setFitWidth(sectionSize);
@@ -281,7 +280,6 @@ public class LevelView {
     public void initializeImg(Image img, int xTileCount, int yTileCount){
         this.sectionCount = xTileCount * yTileCount;
         this.correctTiles = sectionCount;
-        System.out.println("all tiles#: "+sectionCount);
         //shorter side determines size, as longer side will be clipped to fit
         double sectionSize;
         if(img.getWidth() -img.getHeight() > 0.1 ){
@@ -290,15 +288,14 @@ public class LevelView {
         } else{
             sectionSize = (int) this.screenWidth/xTileCount;
         }
-//        int sectionWidth = (int)this.screenWidth/xTileCount;
-//        int sectionHeight = (int) this.screenHeight/yTileCount;
-        System.out.println("sectionSize: "+sectionSize);
+        this.screenWidth = (int) sectionSize * xTileCount;
+        this.screenHeight = (int) sectionSize * yTileCount;
+        menu.resetStageSize(screenWidth, screenHeight);
         for(int x = 0; x < xTileCount; x++){
             for(int y = 0; y < yTileCount; y++){
                 int pos = (x * yTileCount + y);
                 int posX = pos % xTileCount;
                 int posY = (pos-posX)/xTileCount;
-                System.out.println("pos: "+pos+", xPos: "+posX+", yPos: "+posY);
 
                 ImageView imgVInitial =  section(img, xTileCount, yTileCount,pos);
                 initializeTile(imgVInitial);
@@ -306,7 +303,6 @@ public class LevelView {
                 Group imgV = new Group();
                 imgV.getChildren().add(imgVInitial);
 
-//                Group rotateIcon = rotateIcon((int) (posX*sectionWidth+0.5*sectionWidth), (int)(posY*sectionHeight+0.5*sectionHeight), sectionWidth/4);
                 Group rotateIcon = rotateIcon((int) (posX*sectionSize+0.5*sectionSize), (int)(posY*sectionSize+0.5*sectionSize), (int)sectionSize/4);
                 rotateIcon.setOpacity(0.2);
                 rotateIcon.setVisible(false);
@@ -362,12 +358,9 @@ public class LevelView {
             int optionsY = optionCount;
             if(this.screenWidth > this.screenHeight){
                 sizeY /= proportion;
-                System.out.println("larger Width, sizeY: "+sizeY);
                 optionsX = Math.floorDiv((int)sizeX, (int)((float) sizeY/optionCount)) ;
             } else if(this.screenHeight > this.screenWidth){
                 sizeX *= proportion;
-                System.out.println("larger Height, sizeX: "+sizeX+", sizeY: "+sizeY);
-                System.out.println("SegmentSize: "+(float) sizeX/optionCount);
                 optionsY = Math.floorDiv((int)sizeY, (int)((float)sizeX/optionCount)) ;
             }
             Rectangle fullSize = new Rectangle(0, 0, sizeX, sizeY);
@@ -391,7 +384,6 @@ public class LevelView {
                 @Override
                 public void handle(MouseEvent e) {
                     initializeImg(img, finalOptionsX, finalOptionsY);
-                    System.out.println("options: X: "+finalOptionsX+", Y: "+finalOptionsY);
                     exitButton.toFront();
                     Group hintButton = hintIcon();
                     giveHint(hintButton);
@@ -408,6 +400,7 @@ public class LevelView {
         setSectionMenu.setOpacity(0.6);
         setSectionMenu.setFitWidth(this.screenWidth);
         setSectionMenu.setFitHeight(this.screenHeight);
+        menu.resetStageSize(this.screenWidth, this.screenHeight);
 
         int borderDist = 20;
         HBox options = new HBox(borderDist);
@@ -434,6 +427,8 @@ public class LevelView {
         this.root = new Group();
         chooseSectioning(img);
         controlButtons();
+        System.out.println("screenheight after initialize: "+this.screenHeight);
+        System.out.println("screenwidth after initialize: "+this.screenWidth);
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.gameScene.getStylesheets().add(css);
         return this.gameScene;
