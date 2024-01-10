@@ -201,8 +201,13 @@ public class LevelView {
 
     /*----WIN-MESSAGE----*/
 
-    public HBox showWinMessage(){
+    public Group showWinMessage(){
+        Group winMessage = new Group();
+        Rectangle backContrast = new Rectangle(screenWidth/8, 20, screenWidth*3/4, 100);
+        backContrast.setFill(Color.BLACK);
+        backContrast.setOpacity(0.4);
         HBox winBox = new HBox();
+        winBox.setPadding(new Insets(25, 10, 10, 10));
         winBox.setPrefWidth(this.screenWidth);
         winBox.setAlignment(Pos.CENTER);
         Label text = new Label("Congratulations!\nYou Won");
@@ -210,14 +215,14 @@ public class LevelView {
         text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
         text.setTextAlignment(TextAlignment.CENTER);
         winBox.getChildren().add(text);
-
-        this.root.getChildren().add(winBox);
-        winBox.setOnMouseClicked((new EventHandler<MouseEvent>() {
+        winMessage.getChildren().addAll(backContrast, winBox);
+        this.root.getChildren().addAll(winMessage);
+        winMessage.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 root.getChildren().remove(winBox);
             }
         }));
-        return winBox;
+        return winMessage;
     }
 
     /*----SINGLE-TILE-LOGIC----*/
@@ -232,7 +237,7 @@ public class LevelView {
         }
         imgV.setRotate(rotation);
         if(this.correctTiles == this.sectionCount){
-            HBox winBox = showWinMessage();
+            Group winBox = showWinMessage();
             FadeTransition fadeOut = new FadeTransition(Duration.millis(2000), winBox);
             fadeOut.setFromValue(1.0);
             fadeOut.setToValue(0.0);

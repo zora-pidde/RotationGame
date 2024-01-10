@@ -23,8 +23,8 @@ public class MenuView extends Application {
     private Scene menuScene;
 
     private Group root = new Group();
-    private int screenWidth = 700;
-    private int screenHeight = 700;
+    private int screenWidth = 760;
+    private int screenHeight = 760;
 
     private LevelView level;
     String css =
