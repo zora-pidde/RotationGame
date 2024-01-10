@@ -71,27 +71,32 @@ public class LevelView {
         Group icon = new Group();
         int strokeWidth = 5;
 
-        Circle lensCorpusBack = new Circle(50, 50, 15);
-        lensCorpusBack.setFill(Color.TRANSPARENT);
-        lensCorpusBack.setStroke(this.controlColor2);
-        lensCorpusBack.setStrokeWidth(strokeWidth*3);
+        int radius = 15;
+        int xCenter = 50;
+        int yCenter = 50;
+        int lineX = 30;
+        int lineY = 75;
+        int lineXEnd = 40;
+        int lineYEnd = 62;
 
-        Line lensGripBack = new Line(30, 75, 40, 62);
-        lensGripBack.setStroke(this.controlColor2);
-        lensGripBack.setStrokeWidth(strokeWidth*3);
+        lookingGlass(radius, xCenter, yCenter, lineX, lineY, lineXEnd, lineYEnd, strokeWidth*3, this.controlColor2, icon);
+        lookingGlass(radius, xCenter, yCenter, lineX, lineY, lineXEnd, lineYEnd, strokeWidth, this.controlColor, icon);
+
+        return icon;
+    }
+
+    private void lookingGlass(int radius, int xCenter, int yCenter, int lineX, int lineY, int lineXEnd, int lineYEnd, int width, Color color,  Group parent){
+        Circle lensCorpusBack = new Circle(xCenter, yCenter, radius);
+        lensCorpusBack.setFill(Color.TRANSPARENT);
+        lensCorpusBack.setStroke(color);
+        lensCorpusBack.setStrokeWidth(width);
+
+        Line lensGripBack = new Line(lineX, lineY, lineXEnd, lineYEnd);
+        lensGripBack.setStroke(color);
+        lensGripBack.setStrokeWidth(width);
         lensGripBack.setStrokeLineCap(StrokeLineCap.ROUND);
 
-        Circle lensCorpus = new Circle(50, 50, 15);
-        lensCorpus.setFill(Color.TRANSPARENT);
-        lensCorpus.setStroke(controlColor);
-        lensCorpus.setStrokeWidth(strokeWidth);
-
-        Line lensGrip = new Line(30, 75, 40, 62);
-        lensGrip.setStroke(controlColor);
-        lensGrip.setStrokeWidth(strokeWidth);
-        lensGrip.setStrokeLineCap(StrokeLineCap.ROUND);
-        icon.getChildren().addAll(lensCorpusBack, lensGripBack, lensCorpus, lensGrip);
-        return icon;
+        parent.getChildren().addAll(lensCorpusBack, lensGripBack);
     }
 
     //create rotation-Icon: one circle with a down-arrow on circumference (length of arrow-point is 0.5*radius)
@@ -128,32 +133,30 @@ public class LevelView {
         int strokeWidth = 5;
         Group icon = new Group();
 
-        Line strokeBack1 = new Line(screenWidth-60, 65, screenWidth-30, 35);
-        strokeBack1.setStroke(this.controlColor2);
-        strokeBack1.setStrokeWidth(strokeWidth*3);
+        int startX = screenWidth-60;
+        int startY = 65;
+        int size = 30;
+
+        Rectangle hiddenHitZone = new Rectangle(startX-5, startY-size-5, size+10, size+10);
+        hiddenHitZone.setFill(Color.TRANSPARENT);
+        icon.getChildren().add(hiddenHitZone);
+        cross(startX, startY, 30, strokeWidth*3, this.controlColor2, icon);
+        cross(startX, startY, 30, strokeWidth, this.controlColor, icon);
+        return icon;
+    }
+
+    public void cross(int lineX, int lineY, int size, int width, Color color, Group parent) {
+        Line strokeBack1 = new Line(lineX, lineY, lineX + size, lineY - size);
+        strokeBack1.setStroke(color);
+        strokeBack1.setStrokeWidth(width);
         strokeBack1.setStrokeLineCap(StrokeLineCap.ROUND);
 
-        Line strokeBack2 = new Line(screenWidth-60, 35, screenWidth-30, 65);
-        strokeBack2.setStroke(this.controlColor2);
-        strokeBack2.setStrokeWidth(strokeWidth*3);
+        Line strokeBack2 = new Line(lineX, lineY - size, lineX + size, lineY);
+        strokeBack2.setStroke(color);
+        strokeBack2.setStrokeWidth(width);
         strokeBack2.setStrokeLineCap(StrokeLineCap.ROUND);
 
-        Line stroke1 = new Line(screenWidth-60, 65, screenWidth-30, 35);
-        stroke1.setStroke(this.controlColor);
-        stroke1.setStrokeWidth(strokeWidth);
-        stroke1.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        Line stroke2 = new Line(screenWidth-60, 35, screenWidth-30, 65);
-        stroke2.setStroke(this.controlColor);
-        stroke2.setStrokeWidth(strokeWidth);
-        stroke2.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        //enhance hit-zone by adding invisible square around the cross
-        Rectangle hiddenHitZone = new Rectangle(screenWidth-65, 30, 40, 40);
-        hiddenHitZone.setFill(Color.TRANSPARENT);
-
-        icon.getChildren().addAll(hiddenHitZone,strokeBack1, strokeBack2, stroke2, stroke1);
-        return icon;
+        parent.getChildren().addAll(strokeBack1, strokeBack2);
     }
 
     /*----CONTROL-BUTTON LOGIC----*/
@@ -162,8 +165,8 @@ public class LevelView {
         hintButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 Text text = new Text("Correct Tiles: "+correctTiles);
-                text.setX(30);
-                text.setY(30);
+                text.setX(20);
+                text.setY(20);
                 text.setFill(controlColor);
                 text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
 
@@ -191,12 +194,10 @@ public class LevelView {
     }
 
     public void controlButtons(){
-//        Group hintButton = hintIcon();
-//        giveHint(hintButton);
         Group exitButton = exitIcon();
         exitToMenu(exitButton);
         this.exitButton = exitButton;
-        root.getChildren().addAll(exitButton);//(hintButton, exitButton);
+        root.getChildren().addAll(exitButton);
     }
 
     /*----WIN-MESSAGE----*/
