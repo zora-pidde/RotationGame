@@ -23,8 +23,8 @@ public class MenuView extends Application {
     private Scene menuScene;
 
     private Group root = new Group();
-    private int screenWidth = 760;
-    private int screenHeight = 760;
+    private int screenWidth = 650;
+    private int screenHeight = 650;
 
     private LevelView level;
     String css =
@@ -76,6 +76,12 @@ public class MenuView extends Application {
             }
         }));
         return imgV;
+    }
+
+    public void changeScene(Scene newScene){
+        stage.setScene(newScene);
+        stage.show();
+        stage.sizeToScene();
     }
 
     public void resetStageSize(double width, double height){

@@ -193,12 +193,17 @@ public class LevelView {
         }));
     }
 
-    public void controlButtons(){
+    public Group retrieveExitButton(){
         Group exitButton = exitIcon();
         exitToMenu(exitButton);
         this.exitButton = exitButton;
-        root.getChildren().addAll(exitButton);
+        return exitButton;
     }
+
+    public void controlButtons(){
+        root.getChildren().addAll(retrieveExitButton());
+    }
+
 
     /*----WIN-MESSAGE----*/
 
@@ -399,6 +404,7 @@ public class LevelView {
                     Group hintButton = hintIcon();
                     giveHint(hintButton);
                     root.getChildren().add(hintButton);
+                    menu.changeScene(level());
                 }
             };
             optionIcon.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandler);
@@ -406,7 +412,7 @@ public class LevelView {
         }
     }
 
-    public void chooseSectioning(Image img){
+    public Group chooseSectioning(Image img){
         ImageView setSectionMenu = new ImageView(img);
         setSectionMenu.setOpacity(0.6);
         setSectionMenu.setFitWidth(this.screenWidth);
@@ -423,7 +429,10 @@ public class LevelView {
         options.setAlignment(Pos.CENTER);
 
         sectioningRepresentation(borderDist*4,6, options);
-        root.getChildren().addAll(setSectionMenu, options);
+        Group selectionRoot = new Group();
+        selectionRoot.getChildren().addAll(setSectionMenu, options);
+        selectionRoot.getChildren().addAll(retrieveExitButton());
+        return selectionRoot;
     }
 
 
@@ -433,7 +442,11 @@ public class LevelView {
         Image img = new Image(this.srcImage);
         this.img = img;
         this.root = new Group();
-        chooseSectioning(img);
+        Group selection = chooseSectioning(img);
+        return new Scene(selection, this.screenWidth, this.screenHeight);
+    }
+
+    public Scene level(){
         controlButtons();
         this.gameScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.gameScene.getStylesheets().add(css);
