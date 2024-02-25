@@ -73,6 +73,11 @@ public class MenuView extends Application {
         rArrow(startX, startY, 30, strokeWidth*3, Color.DARKGREY, icon);
         rArrow(startX, startY, 30, strokeWidth, Color.WHITE, icon);
 
+
+        return icon;
+    }
+
+    public void addNextPageEvent(Group icon){
         icon.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
 
@@ -83,16 +88,29 @@ public class MenuView extends Application {
             }
         }));
 
-        return icon;
+    }
+
+    public void addLastPageEvent(Group icon){
+        icon.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+
+                root.getChildren().remove(pages[currentPage]);
+                int nextPage = (pages.length + currentPage - 1) % pages.length;
+                root.getChildren().addFirst(pages[nextPage]);
+                currentPage = nextPage;
+            }
+        }));
+
     }
 
     public void menuCallback(){
-        this.stage.setWidth(this.screenWidth);
-        this.stage.setHeight(this.screenHeight);
+//        this.stage.setWidth(this.screenWidth);
+//        this.stage.setHeight(this.screenHeight);
         this.stage.setScene(this.menuScene);
+        this.stage.sizeToScene();
     }
 
-    public LinearGradient crinklePattern(double width) {
+    public LinearGradient crinklePattern() {
     Color color1 = Color.hsb(21, 0.17, 0.82);
 
     Color color2 = Color.hsb(20, 0.01, 0.89);
@@ -200,16 +218,19 @@ public class MenuView extends Application {
         this.level.setScreenSize(this.screenWidth, this.screenHeight);
         this.level.setMenuView(this);
         this.menuScene = new Scene(this.root, this.screenWidth, this.screenHeight);
-        this.menuScene.setFill(crinklePattern(0.3));
+        this.menuScene.setFill(crinklePattern());
         this.menuScene.getStylesheets().add(css);
-//        VBox heightRegion = new VBox();
-//        heightRegion.setPrefHeight(this.screenHeight);
-//        addHeader(heightRegion);
-//        addLevels(heightRegion);
-//        this.root.getChildren().add(heightRegion);
         addLevels();
         this.root.getChildren().add(pages[currentPage]);
-        this.root.getChildren().addAll(nextPageIcon());
+        Group nextPage = nextPageIcon();
+        addNextPageEvent(nextPage);
+
+        Group lastPage = nextPageIcon();
+        lastPage.setScaleX(-1.0);
+        lastPage.setTranslateX(-screenWidth+1.5*60);
+        addLastPageEvent(lastPage);
+
+        this.root.getChildren().addAll(nextPage, lastPage);
 
         stage.setScene(this.menuScene);
         stage.setTitle("Menu");
