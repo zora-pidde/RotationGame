@@ -14,9 +14,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-
 
 public class MenuView extends Application {
     private Stage stage;
@@ -26,9 +28,63 @@ public class MenuView extends Application {
     private int screenWidth = 650;
     private int screenHeight = 650;
 
+    private int nLevels = 8;
+
+    private int currentPage = 0;
+
+    private VBox[] pages;
+
     private LevelView level;
+
+
     String css =
         this.getClass().getResource("/styles.css").toExternalForm();
+
+    public void rArrow(int lineX, int lineY, int size, int width, Color color, Group parent) {
+        Line strokeBack1 = new Line(lineX, lineY, lineX + size, lineY);
+        strokeBack1.setStroke(color);
+        strokeBack1.setStrokeWidth(width);
+        strokeBack1.setStrokeLineCap(StrokeLineCap.ROUND);
+
+        Line strokeBack2 = new Line(lineX+size, lineY, lineX + 0.5*size, lineY-0.5*size);
+        strokeBack2.setStroke(color);
+        strokeBack2.setStrokeWidth(width);
+        strokeBack2.setStrokeLineCap(StrokeLineCap.ROUND);
+
+        Line strokeBack3 = new Line(lineX+size, lineY, lineX + 0.5*size, lineY+0.5*size);
+        strokeBack3.setStroke(color);
+        strokeBack3.setStrokeWidth(width);
+        strokeBack3.setStrokeLineCap(StrokeLineCap.ROUND);
+
+        parent.getChildren().addAll(strokeBack1, strokeBack2, strokeBack3);
+    }
+
+    private Group nextPageIcon(){
+        int strokeWidth = 5;
+        Group icon = new Group();
+
+        int startX = screenWidth-60;
+        int startY = screenHeight-60;
+        int size = 30;
+
+        Rectangle hiddenHitZone = new Rectangle(startX-5, startY-size-5, size+10, size+10);
+        hiddenHitZone.setFill(Color.TRANSPARENT);
+        icon.getChildren().add(hiddenHitZone);
+        rArrow(startX, startY, 30, strokeWidth*3, Color.DARKGREY, icon);
+        rArrow(startX, startY, 30, strokeWidth, Color.WHITE, icon);
+
+        icon.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+
+                root.getChildren().remove(pages[currentPage]);
+                int nextPage = (currentPage + 1) % pages.length;
+                root.getChildren().addFirst(pages[nextPage]);
+                currentPage = nextPage;
+            }
+        }));
+
+        return icon;
+    }
 
     public void menuCallback(){
         this.stage.setWidth(this.screenWidth);
@@ -37,9 +93,9 @@ public class MenuView extends Application {
     }
 
     public LinearGradient crinklePattern(double width) {
-    Color color1 = Color.hsb(0, 0.2, 0.8);
+    Color color1 = Color.hsb(21, 0.17, 0.82);
 
-    Color color2 = Color.hsb(0, 0.2, 0.7);
+    Color color2 = Color.hsb(20, 0.01, 0.89);
     Stop[] stops = new Stop[]{new Stop(0, color1), new Stop(1, color2)};
      return new LinearGradient(0, 0.3, 10, 0.3, false, CycleMethod.REPEAT, stops);
     }
@@ -60,7 +116,7 @@ public class MenuView extends Application {
             screenX = (int) (this.screenWidth*proportion);
         } else {
             imgV.setFitWidth(size);
-            imgV.setFitHeight(size * 1/proportion);//(img.getHeight()/img.getWidth()));
+            imgV.setFitHeight(size/proportion);
             screenY = (int)(this.screenHeight/proportion);
         }
         int finalScreenX = screenX;
@@ -90,31 +146,37 @@ public class MenuView extends Application {
     }
 
 
-    public void addLevels(VBox heightRegion){
+    public void addLevels(){
         int spacing = 15;
         int borderDist = 10;
         int size = 200;
-        // CAREFUL: if adding new pictures need to reset this number
-        int nPics = 8;
         int nPicsPerRow = (this.screenWidth - 2* borderDist + spacing)/(size + spacing);
-        int nRows = Math.ceilDiv(nPics, nPicsPerRow);
-        for(int i = 0; i < nRows; i++) {
-            System.out.println();
-            HBox levels = new HBox(spacing);
-//            levels.setPadding(new Insets(this.screenHeight / 10 + i*(size+spacing), borderDist, borderDist, borderDist));
-            levels.setPadding(new Insets(borderDist, borderDist, borderDist, borderDist));
-            levels.setMaxWidth(screenWidth);
-            levels.setMinWidth(screenWidth);
-            levels.setPrefHeight(size + spacing);
-            levels.setAlignment(Pos.CENTER);
-            for (int j = 0; j < nPicsPerRow; j++) {
-                if (i * nPicsPerRow + (j + 1) > nPics) {
-                    break;
+        int nRows = Math.ceilDiv(nLevels, nPicsPerRow);
+        //deduct space reserved for header
+        int nRowsPerPage = (this.screenHeight - 40 - 2* borderDist + spacing)/(size + spacing);
+        int nPages = Math.ceilDiv(nLevels, nRowsPerPage * nPicsPerRow);
+        pages = new VBox[nPages];
+        for(int i = 0; i < nPages; i++){
+            VBox page = new VBox();
+            page.setPrefHeight(this.screenHeight);
+            addHeader(page);
+            for(int j = 0; j < nRowsPerPage; j++){
+                HBox row = new HBox(spacing);
+                row.setPadding(new Insets(borderDist, borderDist, borderDist, borderDist));
+                row.setMaxWidth(screenWidth);
+                row.setMinWidth(screenWidth);
+                row.setPrefHeight(size + spacing);
+                row.setAlignment(Pos.CENTER);
+                int k = 0;
+                while(k < nPicsPerRow && ((i*nRowsPerPage * nPicsPerRow) + j * nPicsPerRow + (k + 1) <= nLevels)){
+                    ImageView imgV = applyLevel("level" + ((i*nRowsPerPage * nPicsPerRow) +  (j * nPicsPerRow + (k + 1)))+ ".png", size);
+                    row.getChildren().add(imgV);
+                    k++;
                 }
-                ImageView imgV = applyLevel("level" + (i * nPicsPerRow + (j + 1)) + ".png", size);
-                levels.getChildren().add(imgV);
+                page.getChildren().add(row);
             }
-            heightRegion.getChildren().add(levels);
+            pages[i] = page;
+
         }
     }
 
@@ -126,7 +188,6 @@ public class MenuView extends Application {
         header.getStyleClass().add("header_text");
         headerBox.setAlignment(Pos.CENTER);
         headerBox.getChildren().add(header);
-//        this.root.getChildren().add(headerBox);
         heightRegion.getChildren().add(headerBox);
     }
 
@@ -141,11 +202,14 @@ public class MenuView extends Application {
         this.menuScene = new Scene(this.root, this.screenWidth, this.screenHeight);
         this.menuScene.setFill(crinklePattern(0.3));
         this.menuScene.getStylesheets().add(css);
-        VBox heightRegion = new VBox();
-        heightRegion.setPrefHeight(this.screenHeight);
-        addHeader(heightRegion);
-        addLevels(heightRegion);
-        this.root.getChildren().add(heightRegion);
+//        VBox heightRegion = new VBox();
+//        heightRegion.setPrefHeight(this.screenHeight);
+//        addHeader(heightRegion);
+//        addLevels(heightRegion);
+//        this.root.getChildren().add(heightRegion);
+        addLevels();
+        this.root.getChildren().add(pages[currentPage]);
+        this.root.getChildren().addAll(nextPageIcon());
 
         stage.setScene(this.menuScene);
         stage.setTitle("Menu");
