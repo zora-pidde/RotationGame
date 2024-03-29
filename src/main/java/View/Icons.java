@@ -152,8 +152,37 @@ class Icons {
         return icon;
     }
 
+    public static Group nextPageIconRound(){
+//        int strokeWidth = 5;
+        Group icon = new Group();
+
+        Rectangle hiddenHitZone = new Rectangle(0, 0, iconSize, iconSize);
+        hiddenHitZone.setFill(Color.TRANSPARENT);
+        icon.getChildren().add(hiddenHitZone);
+        icon.getChildren().addAll(rArrow(controlColor2, strokeWidth * outerStrokeFactor));
+        Circle background = new Circle();
+        background.setFill(controlColor2);
+        background.setCenterX(iconSize*0.5);
+        background.setCenterY(iconSize*0.5);
+        background.setRadius((iconSize+strokeWidth*outerStrokeFactor)*0.5);
+        icon.getChildren().addAll(background);
+        icon.getChildren().addAll(rArrow(controlColor, strokeWidth));
+
+        //adjust for strokeWidth and padding
+        icon.setTranslateX(outerStrokeFactor * strokeWidth * 0.5 + padding);
+        icon.setTranslateY(outerStrokeFactor * strokeWidth * 0.5 + padding);
+
+        return icon;
+    }
+
     public static Group lastPageIcon(){
         Group icon = nextPageIcon();
+        icon.setScaleX(-1.);
+        return icon;
+    }
+
+    public static Group lastPageIconRound(){
+        Group icon = nextPageIconRound();
         icon.setScaleX(-1.);
         return icon;
     }

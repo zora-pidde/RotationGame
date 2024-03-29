@@ -186,14 +186,14 @@ public class MenuView extends Application {
         this.menuScene.getStylesheets().add(css);
         addLevels();
         this.root.getChildren().add(pages[currentPage]);
-        Group nextPage = Icons.nextPageIcon();
-        nextPage.setTranslateY(screenHeight - Icons.iconSize - nextPage.getTranslateY());
+        Group nextPage = Icons.nextPageIconRound();
+//        nextPage.setTranslateY(screenHeight - Icons.iconSize - nextPage.getTranslateY());
         nextPage.setTranslateX(screenWidth - Icons.iconSize - nextPage.getTranslateX());
         addNextPageEvent(nextPage);
 
-        Group lastPage = Icons.lastPageIcon();
-
-        lastPage.setTranslateY(screenHeight - Icons.iconSize - lastPage.getTranslateY());
+        Group lastPage = Icons.lastPageIconRound();
+//
+//        lastPage.setTranslateY(screenHeight - Icons.iconSize - lastPage.getTranslateY());
         addLastPageEvent(lastPage);
 
         this.root.getChildren().addAll(nextPage, lastPage);
