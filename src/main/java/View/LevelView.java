@@ -4,6 +4,8 @@ import javafx.animation.FadeTransition;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -43,6 +45,10 @@ public class LevelView {
     private Image img;
 
     private Group exitButton;
+
+    private Group tiles;
+
+    private ImageView solution;
 
     String css = this.getClass().getResource("/styles.css").toExternalForm();
 
@@ -117,6 +123,19 @@ public class LevelView {
                 } catch(Exception e){
                     fadeOut.play();
                 }
+            }
+        }));
+    }
+
+    public void showSolution(Group showSolutionButton){
+        showSolutionButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+
+                FadeTransition fadeOpacity = new FadeTransition(Duration.millis(2000), tiles);
+                fadeOpacity.setFromValue(0.2);
+                fadeOpacity.setToValue(0.7);
+                fadeOpacity.setOnFinished(e -> tiles.setOpacity(1.));
+                fadeOpacity.play();
             }
         }));
     }
@@ -256,7 +275,8 @@ public class LevelView {
         this.screenHeight = (int) sectionSize * yTileCount;
         menu.resetStageSize(screenWidth, screenHeight);
         ImageView comparisonHelp = section(img, 1, 1, 0, 0, 0);
-        root.getChildren().addAll(comparisonHelp);
+
+        Group tiles = new Group();
         for(int x = 0; x < xTileCount; x++){
             for(int y = 0; y < yTileCount; y++){
                 int pos = (x * yTileCount + y);
@@ -307,11 +327,12 @@ public class LevelView {
                 imgV.addEventHandler(MouseEvent.MOUSE_ENTERED, mouseOverHandler);
                 imgV.addEventHandler(MouseEvent.MOUSE_EXITED, mouseLeaveHandler);
                 imgV.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandler);
-                imgV.setOpacity(0.3);
-                root.getChildren().addAll(imgV);
+                tiles.getChildren().addAll(imgV);
             }
         }
-
+        this.tiles = tiles;
+        this.solution = comparisonHelp;
+        root.getChildren().addAll(comparisonHelp, tiles);
     }
 
     public void sectioningRepresentation(int size, int maxOptions, HBox parent){
@@ -354,6 +375,7 @@ public class LevelView {
                     Group hintButton = Icons.hintIcon();
                     giveHint(hintButton);
                     Group showSolutionButton = Icons.showSolutionIcon();
+                    showSolution(showSolutionButton);
                     root.getChildren().addAll(hintButton, showSolutionButton);
                     menu.changeScene(level());
                 }
