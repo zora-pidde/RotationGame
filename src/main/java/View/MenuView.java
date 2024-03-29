@@ -40,42 +40,6 @@ public class MenuView extends Application {
     String css =
         this.getClass().getResource("/styles.css").toExternalForm();
 
-    public void rArrow(int lineX, int lineY, int size, int width, Color color, Group parent) {
-        Line strokeBack1 = new Line(lineX, lineY, lineX + size, lineY);
-        strokeBack1.setStroke(color);
-        strokeBack1.setStrokeWidth(width);
-        strokeBack1.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        Line strokeBack2 = new Line(lineX+size, lineY, lineX + 0.5*size, lineY-0.5*size);
-        strokeBack2.setStroke(color);
-        strokeBack2.setStrokeWidth(width);
-        strokeBack2.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        Line strokeBack3 = new Line(lineX+size, lineY, lineX + 0.5*size, lineY+0.5*size);
-        strokeBack3.setStroke(color);
-        strokeBack3.setStrokeWidth(width);
-        strokeBack3.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        parent.getChildren().addAll(strokeBack1, strokeBack2, strokeBack3);
-    }
-
-    private Group nextPageIcon(){
-        int strokeWidth = 5;
-        Group icon = new Group();
-
-        int startX = screenWidth-60;
-        int startY = screenHeight-60;
-        int size = 30;
-
-        Rectangle hiddenHitZone = new Rectangle(startX-5, startY-size-5, size+10, size+10);
-        hiddenHitZone.setFill(Color.TRANSPARENT);
-        icon.getChildren().add(hiddenHitZone);
-        rArrow(startX, startY, 30, strokeWidth*3, Color.DARKGREY, icon);
-        rArrow(startX, startY, 30, strokeWidth, Color.WHITE, icon);
-
-
-        return icon;
-    }
 
     public void addNextPageEvent(Group icon){
         icon.setOnMouseClicked((new EventHandler<MouseEvent>() {
@@ -222,12 +186,14 @@ public class MenuView extends Application {
         this.menuScene.getStylesheets().add(css);
         addLevels();
         this.root.getChildren().add(pages[currentPage]);
-        Group nextPage = nextPageIcon();
+        Group nextPage = Icons.nextPageIcon();
+        nextPage.setTranslateY(screenHeight - Icons.iconSize - nextPage.getTranslateY());
+        nextPage.setTranslateX(screenWidth - Icons.iconSize - nextPage.getTranslateX());
         addNextPageEvent(nextPage);
 
-        Group lastPage = nextPageIcon();
-        lastPage.setScaleX(-1.0);
-        lastPage.setTranslateX(-screenWidth+1.5*60);
+        Group lastPage = Icons.lastPageIcon();
+
+        lastPage.setTranslateY(screenHeight - Icons.iconSize - lastPage.getTranslateY());
         addLastPageEvent(lastPage);
 
         this.root.getChildren().addAll(nextPage, lastPage);

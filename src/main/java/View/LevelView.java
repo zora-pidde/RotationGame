@@ -66,38 +66,6 @@ public class LevelView {
         this.menu = menu;
     }
 
-    /*----CONTROL-BUTTON-GRAPHICS----*/
-    private Group hintIcon(){
-        Group icon = new Group();
-        int strokeWidth = 5;
-
-        int radius = 15;
-        int xCenter = 50;
-        int yCenter = 50;
-        int lineX = 30;
-        int lineY = 75;
-        int lineXEnd = 40;
-        int lineYEnd = 62;
-
-        lookingGlass(radius, xCenter, yCenter, lineX, lineY, lineXEnd, lineYEnd, strokeWidth*3, this.controlColor2, icon);
-        lookingGlass(radius, xCenter, yCenter, lineX, lineY, lineXEnd, lineYEnd, strokeWidth, this.controlColor, icon);
-
-        return icon;
-    }
-
-    private void lookingGlass(int radius, int xCenter, int yCenter, int lineX, int lineY, int lineXEnd, int lineYEnd, int width, Color color,  Group parent){
-        Circle lensCorpusBack = new Circle(xCenter, yCenter, radius);
-        lensCorpusBack.setFill(Color.TRANSPARENT);
-        lensCorpusBack.setStroke(color);
-        lensCorpusBack.setStrokeWidth(width);
-
-        Line lensGripBack = new Line(lineX, lineY, lineXEnd, lineYEnd);
-        lensGripBack.setStroke(color);
-        lensGripBack.setStrokeWidth(width);
-        lensGripBack.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        parent.getChildren().addAll(lensCorpusBack, lensGripBack);
-    }
 
     //create rotation-Icon: one circle with a down-arrow on circumference (length of arrow-point is 0.5*radius)
     private Group rotateIcon(int centerX, int centerY, int radius){
@@ -127,36 +95,6 @@ public class LevelView {
 
         icon.getChildren().addAll(rotation, stroke1, stroke2);
         return icon;
-    }
-
-    private Group exitIcon(){
-        int strokeWidth = 5;
-        Group icon = new Group();
-
-        int startX = screenWidth-60;
-        int startY = 65;
-        int size = 30;
-
-        Rectangle hiddenHitZone = new Rectangle(startX-5, startY-size-5, size+10, size+10);
-        hiddenHitZone.setFill(Color.TRANSPARENT);
-        icon.getChildren().add(hiddenHitZone);
-        cross(startX, startY, 30, strokeWidth*3, this.controlColor2, icon);
-        cross(startX, startY, 30, strokeWidth, this.controlColor, icon);
-        return icon;
-    }
-
-    public void cross(int lineX, int lineY, int size, int width, Color color, Group parent) {
-        Line strokeBack1 = new Line(lineX, lineY, lineX + size, lineY - size);
-        strokeBack1.setStroke(color);
-        strokeBack1.setStrokeWidth(width);
-        strokeBack1.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        Line strokeBack2 = new Line(lineX, lineY - size, lineX + size, lineY);
-        strokeBack2.setStroke(color);
-        strokeBack2.setStrokeWidth(width);
-        strokeBack2.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        parent.getChildren().addAll(strokeBack1, strokeBack2);
     }
 
     /*----CONTROL-BUTTON LOGIC----*/
@@ -194,7 +132,8 @@ public class LevelView {
     }
 
     public Group retrieveExitButton(){
-        Group exitButton = exitIcon();
+        Group exitButton = Icons.exitIcon();
+        exitButton.setTranslateX(screenWidth - Icons.iconSize - exitButton.getTranslateX());
         exitToMenu(exitButton);
         this.exitButton = exitButton;
         return exitButton;
@@ -401,7 +340,7 @@ public class LevelView {
                 public void handle(MouseEvent e) {
                     initializeImg(img, finalOptionsX, finalOptionsY);
                     exitButton.toFront();
-                    Group hintButton = hintIcon();
+                    Group hintButton = Icons.hintIcon();
                     giveHint(hintButton);
                     root.getChildren().add(hintButton);
                     menu.changeScene(level());
@@ -417,7 +356,7 @@ public class LevelView {
         setSectionMenu.setOpacity(0.6);
         setSectionMenu.setFitWidth(this.screenWidth);
         setSectionMenu.setFitHeight(this.screenHeight);
-        menu.resetStageSize(this.screenWidth, this.screenHeight);
+//        menu.resetStageSize(this.screenWidth, this.screenHeight);
 
         int borderDist = 20;
         HBox options = new HBox(borderDist);
