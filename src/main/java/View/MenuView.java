@@ -14,9 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
@@ -68,8 +65,6 @@ public class MenuView extends Application {
     }
 
     public void menuCallback(){
-//        this.stage.setWidth(this.screenWidth);
-//        this.stage.setHeight(this.screenHeight);
         this.stage.setScene(this.menuScene);
         this.stage.sizeToScene();
     }

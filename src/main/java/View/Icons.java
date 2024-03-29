@@ -2,10 +2,7 @@ package View;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 
 class Icons {
@@ -66,6 +63,46 @@ class Icons {
 
 
         return lookingGlass;
+    }
+
+    public static Group showSolutionIcon() {
+        Group icon = new Group();
+        icon.getChildren().addAll(eye(controlColor2, strokeWidth*outerStrokeFactor));
+        icon.getChildren().addAll(eye(controlColor, strokeWidth));
+
+        icon.setTranslateX((outerStrokeFactor * strokeWidth *0.5 + padding) * 3 + iconSize);
+        icon.setTranslateY(outerStrokeFactor * strokeWidth * 0.5 + padding);
+        return icon;
+    }
+
+    public static Group eye(Color color, int strokeWidth){
+        Group icon = new Group();
+        CubicCurve upperLid = eyeLid(color, strokeWidth, iconSize*0.1);
+        CubicCurve lowerLid = eyeLid(color, strokeWidth, iconSize*0.9);
+        Circle iris = new Circle(iconSize*0.5, iconSize*0.5, iconSize*0.25);
+        iris.setFill(Color.TRANSPARENT);
+        iris.setStroke(color);
+        iris.setStrokeWidth(strokeWidth);
+        Circle pupil = new Circle(iconSize*0.5, iconSize*0.5, iconSize*0.1);
+        pupil.setFill(color);
+        icon.getChildren().addAll(upperLid, lowerLid, iris, pupil);
+        return icon;
+    }
+
+    public static CubicCurve eyeLid(Color color, int strokeWidth, double controlY){
+        CubicCurve eyeLid = new CubicCurve();
+        eyeLid.setStartX(0);
+        eyeLid.setStartY(iconSize*0.5);
+        eyeLid.setEndX(iconSize);
+        eyeLid.setEndY(iconSize*0.5);
+        eyeLid.setControlX1(iconSize*0.25);
+        eyeLid.setControlY1(controlY);
+        eyeLid.setControlX2(iconSize*0.75);
+        eyeLid.setControlY2(controlY);
+        eyeLid.setFill(Color.TRANSPARENT);
+        eyeLid.setStroke(color);
+        eyeLid.setStrokeWidth(strokeWidth);
+        return eyeLid;
     }
 
 

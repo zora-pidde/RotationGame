@@ -255,6 +255,8 @@ public class LevelView {
         this.screenWidth = (int) sectionSize * xTileCount;
         this.screenHeight = (int) sectionSize * yTileCount;
         menu.resetStageSize(screenWidth, screenHeight);
+        ImageView comparisonHelp = section(img, 1, 1, 0, 0, 0);
+        root.getChildren().addAll(comparisonHelp);
         for(int x = 0; x < xTileCount; x++){
             for(int y = 0; y < yTileCount; y++){
                 int pos = (x * yTileCount + y);
@@ -305,7 +307,7 @@ public class LevelView {
                 imgV.addEventHandler(MouseEvent.MOUSE_ENTERED, mouseOverHandler);
                 imgV.addEventHandler(MouseEvent.MOUSE_EXITED, mouseLeaveHandler);
                 imgV.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandler);
-
+                imgV.setOpacity(0.3);
                 root.getChildren().addAll(imgV);
             }
         }
@@ -351,7 +353,8 @@ public class LevelView {
                     exitButton.toFront();
                     Group hintButton = Icons.hintIcon();
                     giveHint(hintButton);
-                    root.getChildren().add(hintButton);
+                    Group showSolutionButton = Icons.showSolutionIcon();
+                    root.getChildren().addAll(hintButton, showSolutionButton);
                     menu.changeScene(level());
                 }
             };
