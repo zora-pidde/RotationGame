@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.*;
@@ -102,22 +103,8 @@ public class LevelView {
     public void giveHint(Group hintButton){
         hintButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
-                Group message = new Group();
-                Rectangle backContrast = new Rectangle(screenWidth/8, 20, screenWidth*3/4, 100);
-                backContrast.setFill(Color.BLACK);
-                backContrast.setOpacity(0.4);
-                HBox messageBox = new HBox();
-                messageBox.setPadding(new Insets(25, 10, 10, 10));
-                messageBox.setPrefWidth(screenWidth);
-                messageBox.setAlignment(Pos.CENTER);
 
-                Text text = new Text("Correct Tiles: "+correctTiles);
-                text.setX(20);
-                text.setY(20);
-                text.setFill(controlColor);
-                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
-                messageBox.getChildren().add(text);
-                message.getChildren().addAll(backContrast, messageBox);
+                Group message = styleMessage(new Label("Correct Tiles: "+correctTiles));
 
                 FadeTransition fadeOut = new FadeTransition(Duration.millis(2000), message);
                 fadeOut.setFromValue(1.0);
@@ -155,27 +142,38 @@ public class LevelView {
     }
 
 
-    /*----WIN-MESSAGE----*/
 
-    public Group showWinMessage(){
-        Group winMessage = new Group();
-        Rectangle backContrast = new Rectangle(screenWidth/8, 20, screenWidth*3/4, 100);
+
+    public Group styleMessage(Label text){
+        Group message = new Group();
+        Rectangle backContrast = new Rectangle(screenWidth/8, screenHeight*0.5-40, screenWidth*3/4, 100);
         backContrast.setFill(Color.BLACK);
         backContrast.setOpacity(0.4);
-        HBox winBox = new HBox();
-        winBox.setPadding(new Insets(25, 10, 10, 10));
-        winBox.setPrefWidth(this.screenWidth);
-        winBox.setAlignment(Pos.CENTER);
-        Label text = new Label("Congratulations!\nYou Won");
+        HBox messageBox = new HBox();
+        VBox alignmentBox = new VBox();
+        alignmentBox.setPrefHeight(this.screenHeight);
+        alignmentBox.setAlignment(Pos.CENTER);
+
+        messageBox.setPadding(new Insets(25, 10, 10, 10));
+        messageBox.setPrefWidth(this.screenWidth);
+        messageBox.setAlignment(Pos.CENTER);
+
         text.setTextFill(this.controlColor);
         text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
         text.setTextAlignment(TextAlignment.CENTER);
-        winBox.getChildren().add(text);
-        winMessage.getChildren().addAll(backContrast, winBox);
+        messageBox.getChildren().add(text);
+        alignmentBox.getChildren().add(messageBox);
+        message.getChildren().addAll(backContrast, alignmentBox);
+        return message;
+    }
+
+    /*----WIN-MESSAGE----*/
+    public Group showWinMessage(){
+        Group winMessage = styleMessage(new Label("Congratulations!\nYou Won"));
         this.root.getChildren().addAll(winMessage);
         winMessage.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
-                root.getChildren().remove(winBox);
+                root.getChildren().remove(winMessage);
             }
         }));
         return winMessage;
