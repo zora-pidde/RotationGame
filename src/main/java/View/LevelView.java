@@ -102,18 +102,29 @@ public class LevelView {
     public void giveHint(Group hintButton){
         hintButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
+                Group message = new Group();
+                Rectangle backContrast = new Rectangle(screenWidth/8, 20, screenWidth*3/4, 100);
+                backContrast.setFill(Color.BLACK);
+                backContrast.setOpacity(0.4);
+                HBox messageBox = new HBox();
+                messageBox.setPadding(new Insets(25, 10, 10, 10));
+                messageBox.setPrefWidth(screenWidth);
+                messageBox.setAlignment(Pos.CENTER);
+
                 Text text = new Text("Correct Tiles: "+correctTiles);
                 text.setX(20);
                 text.setY(20);
                 text.setFill(controlColor);
-                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
+                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+                messageBox.getChildren().add(text);
+                message.getChildren().addAll(backContrast, messageBox);
 
-                FadeTransition fadeOut = new FadeTransition(Duration.millis(2000), text);
+                FadeTransition fadeOut = new FadeTransition(Duration.millis(2000), message);
                 fadeOut.setFromValue(1.0);
                 fadeOut.setToValue(0.0);
-                fadeOut.setOnFinished(e -> root.getChildren().remove(text));
+                fadeOut.setOnFinished(e -> root.getChildren().remove(message));
                 try{
-                    root.getChildren().add(text);
+                    root.getChildren().add(message);
                     fadeOut.play();
                     //if hint still displayed -> refresh text
                 } catch(Exception e){
@@ -356,7 +367,6 @@ public class LevelView {
         setSectionMenu.setOpacity(0.6);
         setSectionMenu.setFitWidth(this.screenWidth);
         setSectionMenu.setFitHeight(this.screenHeight);
-//        menu.resetStageSize(this.screenWidth, this.screenHeight);
 
         int borderDist = 20;
         HBox options = new HBox(borderDist);
