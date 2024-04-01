@@ -4,8 +4,6 @@ import javafx.animation.FadeTransition;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -48,7 +46,6 @@ public class LevelView {
 
     private Group tiles;
 
-    private ImageView solution;
 
     String css = this.getClass().getResource("/styles.css").toExternalForm();
 
@@ -228,13 +225,13 @@ public class LevelView {
     public ImageView section(Image img, int xSectionAmount, int ySectionAmount, int pos, double offsetX, double offsetY) {
         double sectionSize;
         double imgSectionSize;
-        if(img.getWidth() -img.getHeight() > 0.1 ){
+        if(img.getWidth() -img.getHeight() > 0.05 ){
             //case longer Width
             sectionSize = (float) this.screenHeight/ySectionAmount;
             imgSectionSize = (float) img.getHeight()/ySectionAmount;
         } else{
             sectionSize = (float) this.screenWidth/xSectionAmount;
-            imgSectionSize = (float) img.getWidth()/ySectionAmount;
+            imgSectionSize = (float) img.getWidth()/xSectionAmount;
         }
         int posX = pos % xSectionAmount;
         int posY = (pos-posX)/xSectionAmount;
@@ -261,20 +258,35 @@ public class LevelView {
 
         if(img.getWidth() -img.getHeight() > 0.1 ){
             //case longer Width
-            sectionSize = (int) this.screenHeight/yTileCount;
+            sectionSize =  this.screenHeight/yTileCount;
             int translateX = (int) (screenWidth - sectionSize * xTileCount);
             exitButton.setTranslateX(-translateX);
 
             offsetX = (screenWidth - xTileCount*sectionSize)/2;
         } else{
-            sectionSize = (int) this.screenWidth/xTileCount;
+            sectionSize = this.screenWidth/xTileCount;
             offsetY = (screenHeight - yTileCount*sectionSize)/2;
         }
+        System.out.println("Width: "+img.getWidth()+" Height: "+img.getHeight());
+        System.out.println("Screen: "+this.screenWidth+" Height: "+this.screenHeight);
+        System.out.println("Tiles: "+sectionSize);
+        System.out.println("Xtiles: "+xTileCount+" Ytiles: "+yTileCount);
+        System.out.println("offsetX: "+offsetX+" offsetY: "+offsetY);
 
         this.screenWidth = (int) sectionSize * xTileCount;
         this.screenHeight = (int) sectionSize * yTileCount;
         menu.resetStageSize(screenWidth, screenHeight);
-        ImageView comparisonHelp = section(img, 1, 1, 0, 0, 0);
+
+        ImageView imgSolution = new ImageView(img);
+//        imgSolution.setFitHeight(img.getHeight());
+        imgSolution.setFitWidth(screenWidth);
+        imgSolution.setFitHeight(screenHeight);
+//        imgSolution.setX(offsetX);
+//        imgSolution.setY(offsetY);
+
+        Rectangle2D imgSection = new Rectangle2D(offsetX,offsetY, img.getWidth(), screenHeight*img.getWidth()/screenWidth);
+        imgSolution.setViewport(imgSection);
+//        ImageView comparisonHelp = section(img, 1, 1, 0, 0, 0);
 
         Group tiles = new Group();
         for(int x = 0; x < xTileCount; x++){
@@ -331,8 +343,7 @@ public class LevelView {
             }
         }
         this.tiles = tiles;
-        this.solution = comparisonHelp;
-        root.getChildren().addAll(comparisonHelp, tiles);
+        root.getChildren().addAll(imgSolution, tiles);
     }
 
     public void sectioningRepresentation(int size, int maxOptions, HBox parent){
@@ -345,10 +356,14 @@ public class LevelView {
             int optionsY = optionCount;
             if(this.screenWidth > this.screenHeight){
                 sizeY /= proportion;
-                optionsX = Math.floorDiv((int)sizeX, (int)((float) sizeY/optionCount)) ;
+//                optionsX = Math.floorDiv((int)sizeX, (int)( sizeY/optionCount)) ;
+                optionsX = (int) Math.floor((sizeX/(sizeY/optionCount)));
             } else if(this.screenHeight > this.screenWidth){
                 sizeX *= proportion;
-                optionsY = Math.floorDiv((int)sizeY, (int)((float)sizeX/optionCount)) ;
+//                optionsY = Math.floorDiv((int)sizeY, (int)(sizeX/optionCount));
+                optionsY = (int) Math.floor( sizeY/( sizeX/optionCount));
+                System.out.println("sizeY: "+sizeY+" sizeX: "+sizeX);
+                System.out.println("option no: "+optionCount+" optionsY: "+optionsY);
             }
             Rectangle fullSize = new Rectangle(0, 0, sizeX, sizeY);
             fullSize.setFill(controlColor);

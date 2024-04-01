@@ -37,15 +37,12 @@ class Icons {
 
     private static Group lookingGlass(Color color, int strokeWidth) {
         double radius = iconSize  * 4f / (5 * 2);
-        System.out.println(radius);
         double xCenter = 0 + radius ;
         double yCenter = 0 + radius ;
         double xStart = radius * 1.75 ;
         double yStart = radius * 1.75 ;
-        System.out.println((xStart));
         double xEnd = iconSize  ;
         double yEnd = iconSize  ;
-        System.out.println(xEnd);
 
         Group lookingGlass = new Group();
 
