@@ -255,17 +255,20 @@ public class LevelView {
         //calculate offset in order to take middle part of picture if clipping is necessary
         double offsetX = 0;
         double offsetY = 0;
+        float imgSectionSize;
 
-        if(img.getWidth() -img.getHeight() > 0.1 ){
+        if(img.getWidth() -img.getHeight() > 0.05 ){
             //case longer Width
             sectionSize =  this.screenHeight/yTileCount;
             int translateX = (int) (screenWidth - sectionSize * xTileCount);
             exitButton.setTranslateX(-translateX);
 
             offsetX = (screenWidth - xTileCount*sectionSize)/2;
+            imgSectionSize = (float) img.getHeight()/yTileCount;
         } else{
             sectionSize = this.screenWidth/xTileCount;
             offsetY = (screenHeight - yTileCount*sectionSize)/2;
+            imgSectionSize = (float) img.getWidth()/xTileCount;
         }
         System.out.println("Width: "+img.getWidth()+" Height: "+img.getHeight());
         System.out.println("Screen: "+this.screenWidth+" Height: "+this.screenHeight);
@@ -281,10 +284,10 @@ public class LevelView {
 //        imgSolution.setFitHeight(img.getHeight());
         imgSolution.setFitWidth(screenWidth);
         imgSolution.setFitHeight(screenHeight);
-//        imgSolution.setX(offsetX);
-//        imgSolution.setY(offsetY);
-
-        Rectangle2D imgSection = new Rectangle2D(offsetX,offsetY, img.getWidth(), screenHeight*img.getWidth()/screenWidth);
+//        Rectangle2D imgSection = new Rectangle2D(offsetX,offsetY, img.getWidth(), screenHeight*img.getWidth()/screenWidth);
+        // !PASST DESWEGEN NICHT WEIL img.getWIDTH bzw img.GETHEIGHT im zweifelsfall nicht im Verhältnis steht (cutoff)
+//        Rectangle2D imgSection = new Rectangle2D(offsetX,offsetY, screenWidth*img.getWidth()/screenWidth, screenHeight*img.getHeight()/screenHeight);
+        Rectangle2D imgSection = new Rectangle2D(offsetX,offsetY, screenWidth*imgSectionSize/sectionSize, screenHeight*imgSectionSize/sectionSize);
         imgSolution.setViewport(imgSection);
 //        ImageView comparisonHelp = section(img, 1, 1, 0, 0, 0);
 
