@@ -16,6 +16,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import org.kordamp.ikonli.javafx.Icon;
 
 public class MenuView extends Application {
     private Stage stage;
@@ -158,13 +159,22 @@ public class MenuView extends Application {
     }
 
     public void addHeader(VBox heightRegion){
-        HBox headerBox = new HBox();
+        HBox headerBox = new HBox(20);
         headerBox.setPrefWidth(this.screenWidth);
         headerBox.setPadding(new Insets(10, 10, 10, 10));
         Label header = new Label("Rotation Game");
         header.getStyleClass().add("header_text");
         headerBox.setAlignment(Pos.CENTER);
-        headerBox.getChildren().add(header);
+
+        Group nextPage = Icons.nextPageIcon();
+        addNextPageEvent(nextPage);
+        Group lastPage = Icons.lastPageIcon  ();
+        nextPage.setTranslateY(Icons.padding);
+        lastPage.setTranslateY(Icons.padding);
+        lastPage.setTranslateX(-2*Icons.padding);
+
+        addLastPageEvent(lastPage);
+        headerBox.getChildren().addAll(lastPage, header, nextPage);
         heightRegion.getChildren().add(headerBox);
     }
 
@@ -181,17 +191,17 @@ public class MenuView extends Application {
         this.menuScene.getStylesheets().add(css);
         addLevels();
         this.root.getChildren().add(pages[currentPage]);
-        Group nextPage = Icons.nextPageIconRound();
-//        nextPage.setTranslateY(screenHeight - Icons.iconSize - nextPage.getTranslateY());
-        nextPage.setTranslateX(screenWidth - Icons.iconSize - nextPage.getTranslateX());
-        addNextPageEvent(nextPage);
-
-        Group lastPage = Icons.lastPageIconRound();
+//        Group nextPage = Icons.nextPageIconRound();
+////        nextPage.setTranslateY(screenHeight - Icons.iconSize - nextPage.getTranslateY());
+//        nextPage.setTranslateX(screenWidth - Icons.iconSize - nextPage.getTranslateX());
+//        addNextPageEvent(nextPage);
 //
-//        lastPage.setTranslateY(screenHeight - Icons.iconSize - lastPage.getTranslateY());
-        addLastPageEvent(lastPage);
+//        Group lastPage = Icons.lastPageIconRound();
+////
+////        lastPage.setTranslateY(screenHeight - Icons.iconSize - lastPage.getTranslateY());
+//        addLastPageEvent(lastPage);
 
-        this.root.getChildren().addAll(nextPage, lastPage);
+//        this.root.getChildren().addAll(nextPage, lastPage);
 
         stage.setScene(this.menuScene);
         stage.setTitle("Menu");
