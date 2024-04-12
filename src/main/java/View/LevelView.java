@@ -18,6 +18,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
 import javafx.util.Duration;
 
+import java.io.InputStream;
+
 
 public class LevelView {
 
@@ -429,7 +431,9 @@ public class LevelView {
     /*----OTHER----*/
 
     public Scene start() {
-        Image img = new Image(this.srcImage);
+        InputStream inLevel = getClass().getResourceAsStream(srcImage);
+        Image img = new Image(inLevel);
+//        Image img = new Image(this.srcImage);
         this.img = img;
         this.root = new Group();
         Group selection = chooseSectioning(img);

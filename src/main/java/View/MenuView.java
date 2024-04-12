@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import org.kordamp.ikonli.javafx.Icon;
 
+import java.io.InputStream;
+
 public class MenuView extends Application {
     private Stage stage;
     private Scene menuScene;
@@ -79,7 +81,9 @@ public class MenuView extends Application {
     }
 
     public ImageView applyLevel(String imgSrc, int size){
-        Image img = new Image(imgSrc);
+        InputStream inLevel = getClass().getResourceAsStream(imgSrc);
+        Image img = new Image(inLevel);
+//        Image img = new Image(imgSrc);
         ImageView imgV = new ImageView(img);
         //check if (close to) squared
         double proportion = (float)img.getWidth()/img.getHeight();
@@ -105,7 +109,7 @@ public class MenuView extends Application {
                 level.setScreenSize(finalScreenX, finalScreenY);
                 Scene levelScene = level.start();
                 stage.setScene(levelScene);
-                stage.setTitle("Level: "+imgSrc.substring(0,imgSrc.length()-4));
+                stage.setTitle("Level: "+imgSrc.substring(5,imgSrc.length()-4));
                 stage.show();
             }
         }));
@@ -147,7 +151,7 @@ public class MenuView extends Application {
                 row.setAlignment(Pos.CENTER);
                 int k = 0;
                 while(k < nPicsPerRow && ((i*nRowsPerPage * nPicsPerRow) + j * nPicsPerRow + (k + 1) <= nLevels)){
-                    ImageView imgV = applyLevel("level" + ((i*nRowsPerPage * nPicsPerRow) +  (j * nPicsPerRow + (k + 1)))+ ".png", size);
+                    ImageView imgV = applyLevel("/img/level" + ((i*nRowsPerPage * nPicsPerRow) +  (j * nPicsPerRow + (k + 1)))+ ".png", size);
                     row.getChildren().add(imgV);
                     k++;
                 }
